@@ -1,10 +1,10 @@
 export interface CourseModule {
   id: string;
-  title: string;
   videoUrl: string;
-  description: string;
   pdfUrl: string;
   practiceSheetUrl: string;
+  contentTitle: string;
+  contentDescription: string;
 }
 
 export interface Course {

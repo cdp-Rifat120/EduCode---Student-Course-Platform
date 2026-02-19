@@ -31,7 +31,9 @@ function Counter() {
         videoUrl: 'https://www.youtube.com/embed/w7ejDZ8SWv8',
         description: 'An overview of what React is and why it is so popular in modern web development.',
         pdfUrl: '#',
-        practiceSheetUrl: '#'
+        practiceSheetUrl: '#',
+        contentTitle: 'React Fundamentals Content',
+        contentDescription: 'Detailed exploration of React core concepts.'
       },
       {
         id: 'jsx-deep-dive',
@@ -39,7 +41,9 @@ function Counter() {
         videoUrl: 'https://www.youtube.com/embed/7fPXI_MnBOY',
         description: 'Understanding the syntax extension for JavaScript and how it transforms into React elements.',
         pdfUrl: '#',
-        practiceSheetUrl: '#'
+        practiceSheetUrl: '#',
+        contentTitle: '',
+        contentDescription: ''
       },
       {
         id: 'components-props',
@@ -47,7 +51,9 @@ function Counter() {
         videoUrl: 'https://www.youtube.com/embed/Y2hgEGPzPZY',
         description: 'Learn how to build reusable UI pieces and pass data between them.',
         pdfUrl: '#',
-        practiceSheetUrl: '#'
+        practiceSheetUrl: '#',
+        contentTitle: '',
+        contentDescription: ''
       }
     ]
   },
@@ -76,7 +82,9 @@ plt.show()`,
         videoUrl: 'https://www.youtube.com/embed/rfscVS0vtbw',
         description: 'A quick refresher on Python syntax specifically for data analysis tasks.',
         pdfUrl: '#',
-        practiceSheetUrl: '#'
+        practiceSheetUrl: '#',
+        contentTitle: 'Python Data Science Content',
+        contentDescription: 'Advanced data analysis techniques with Python.'
       },
       {
         id: 'pandas-intro',
@@ -84,7 +92,9 @@ plt.show()`,
         videoUrl: 'https://www.youtube.com/embed/vmEHCJofslg',
         description: 'Learn how to manipulate dataframes and series using the powerful Pandas library.',
         pdfUrl: '#',
-        practiceSheetUrl: '#'
+        practiceSheetUrl: '#',
+        contentTitle: '',
+        contentDescription: ''
       }
     ]
   },
@@ -116,7 +126,9 @@ plt.show()`,
         videoUrl: 'https://www.youtube.com/embed/mr15Xzb1Ook',
         description: 'Why utility-first CSS is a game changer for developer productivity.',
         pdfUrl: '#',
-        practiceSheetUrl: '#'
+        practiceSheetUrl: '#',
+        contentTitle: 'Tailwind CSS Mastery Content',
+        contentDescription: 'Mastering utility-first CSS design patterns.'
       },
       {
         id: 'responsive-design',
@@ -124,7 +136,9 @@ plt.show()`,
         videoUrl: 'https://www.youtube.com/embed/6zIuAyLZAt0',
         description: 'Mastering breakpoints and mobile-first design patterns.',
         pdfUrl: '#',
-        practiceSheetUrl: '#'
+        practiceSheetUrl: '#',
+        contentTitle: '',
+        contentDescription: ''
       }
     ]
   }
