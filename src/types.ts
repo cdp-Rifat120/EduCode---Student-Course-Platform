@@ -1,3 +1,12 @@
+export interface CourseModule {
+  id: string;
+  title: string;
+  videoUrl: string;
+  description: string;
+  pdfUrl: string;
+  practiceSheetUrl: string;
+}
+
 export interface Course {
   id: string;
   title: string;
@@ -7,4 +16,6 @@ export interface Course {
   codeSnippet: string;
   language: string;
   content: string;
+  routineUrl: string;
+  modules: CourseModule[];
 }
