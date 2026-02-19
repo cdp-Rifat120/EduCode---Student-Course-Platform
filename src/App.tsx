@@ -8,6 +8,8 @@ import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate, u
 import { motion, AnimatePresence } from 'motion/react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { db } from './firebase';
+import { collection, getDocs, doc, setDoc, addDoc, deleteDoc } from 'firebase/firestore';
 import { 
   BookOpen, 
   Code, 
@@ -404,17 +406,6 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
               View Full Routine
               <ExternalLink size={14} className="opacity-40" />
             </button>
-            
-            <div className="flex items-center gap-4">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Share this course</span>
-              <div className="flex gap-2">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="h-10 w-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all cursor-pointer">
-                    <ExternalLink size={16} />
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </main>
@@ -574,14 +565,20 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
   const navigate = useNavigate();
 
   const handleSave = async (course: Course) => {
-    const method = isAdding ? 'POST' : 'PUT';
-    const url = isAdding ? '/api/courses' : `/api/courses/${course.id}`;
-    
-    await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(course)
-    });
+    try {
+      if (isAdding) {
+        if (course.id) {
+          await setDoc(doc(db, "courses", course.id), course);
+        } else {
+          await addDoc(collection(db, "courses"), course);
+        }
+      } else {
+        await setDoc(doc(db, "courses", course.id), course);
+      }
+    } catch (err) {
+      console.error('Error saving course:', err);
+      alert('Failed to save course. Check console for details.');
+    }
     
     setEditingCourse(null);
     setIsAdding(false);
@@ -647,6 +644,23 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
               >
                 <Edit size={18} />
                 <span>Edit Details</span>
+              </button>
+              <button 
+                onClick={async () => {
+                  if (window.confirm('Are you sure you want to delete this course?')) {
+                    try {
+                      await deleteDoc(doc(db, "courses", course.id));
+                      onUpdate();
+                    } catch (err) {
+                      console.error('Error deleting course:', err);
+                      alert('Failed to delete course.');
+                    }
+                  }
+                }}
+                className="flex items-center gap-2 px-5 py-3 rounded-2xl text-red-600 bg-red-50 hover:bg-red-100 transition-all font-bold text-sm"
+              >
+                <Trash2 size={18} />
+                <span>Delete</span>
               </button>
               <button 
                 onClick={() => navigate(`/${course.id}`)} 
@@ -970,8 +984,8 @@ export default function App() {
 
   const fetchCourses = async () => {
     try {
-      const res = await fetch('/api/courses');
-      const data = await res.json();
+      const querySnapshot = await getDocs(collection(db, "courses"));
+      const data = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Course));
       setCourses(data);
     } catch (err) {
       console.error('Failed to fetch courses:', err);
