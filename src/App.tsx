@@ -39,40 +39,45 @@ import { Course, CourseModule } from './types';
 const Navbar = ({ isAdmin, onLogout }: { isAdmin: boolean; onLogout: () => void }) => {
   const navigate = useNavigate();
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/90 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <button onClick={() => navigate('/')} className="flex items-center gap-2 group shrink-0 cursor-pointer">
-          <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-indigo-600 text-white transition-all group-hover:scale-105 group-hover:rotate-3 shadow-lg shadow-indigo-200">
-            <Code size={20} className="sm:w-6 sm:h-6" />
+    <nav className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/70 backdrop-blur-2xl">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 sm:px-8 lg:px-10">
+        <button onClick={() => navigate('/')} className="flex items-center gap-3 group shrink-0 cursor-pointer">
+          <div className="flex h-11 w-11 items-center justify-center rounded-[1.25rem] bg-indigo-600 text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-[0_10px_20px_rgba(79,70,229,0.3)]">
+            <Code size={22} />
           </div>
-          <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">EduCode</span>
+          <div className="flex flex-col">
+            <span className="text-xl font-black tracking-tight text-slate-900 leading-none">EduCode</span>
+            <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-[0.2em] mt-1">Academy</span>
+          </div>
         </button>
         
-        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+        <div className="flex items-center gap-4 shrink-0">
           {isAdmin ? (
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-3">
               <button 
                 onClick={() => navigate('/admin-panel')}
-                className="flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-sm font-semibold text-indigo-600 transition-all hover:bg-indigo-100"
+                className="flex items-center gap-2 rounded-2xl bg-indigo-50 px-5 py-2.5 text-xs font-bold text-indigo-600 transition-all hover:bg-indigo-100"
               >
-                <Settings size={14} className="sm:w-4 sm:h-4" />
-                <span>Admin</span>
+                <Settings size={16} />
+                <span>Dashboard</span>
               </button>
               <button 
                 onClick={onLogout}
-                className="flex items-center gap-1.5 rounded-full bg-slate-900 px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-sm font-semibold text-white transition-all hover:bg-slate-800"
+                className="flex items-center gap-2 rounded-2xl bg-slate-900 px-5 py-2.5 text-xs font-bold text-white transition-all hover:bg-slate-800 shadow-lg shadow-slate-200"
               >
-                <LogOut size={14} className="sm:w-4 sm:h-4" />
+                <LogOut size={16} />
                 <span>Logout</span>
               </button>
             </div>
           ) : (
             <button 
               onClick={() => navigate('/admin-login')}
-              className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-xs font-bold text-white transition-all hover:bg-slate-800 hover:shadow-lg active:scale-95 sm:px-5 sm:text-sm"
+              className="group flex items-center gap-2 rounded-2xl bg-slate-900 px-6 py-3 text-sm font-bold text-white transition-all hover:bg-slate-800 hover:shadow-[0_15px_30px_rgba(0,0,0,0.1)] active:scale-95"
             >
-              <LogIn size={16} />
-              <span>Admin Login</span>
+              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
+                <LogIn size={14} />
+              </div>
+              <span>Admin Access</span>
             </button>
           )}
         </div>
@@ -88,42 +93,59 @@ const CourseCard = ({ course }: { course: Course }) => {
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-xl"
+      whileHover={{ y: -8, transition: { duration: 0.3, ease: "easeOut" } }}
+      className="group relative flex flex-col overflow-hidden rounded-[2rem] border border-slate-200/60 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all hover:shadow-[0_20px_50px_rgba(79,70,229,0.1)]"
     >
-      <div className="mb-4 flex items-center justify-between">
-        <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600 uppercase tracking-wider">
-          {course.category}
-        </span>
-        <div className="text-slate-400 group-hover:text-indigo-600 transition-colors">
-          {course.category === 'Web Development' && <Layout size={20} />}
-          {course.category === 'Data Science' && <Cpu size={20} />}
-          {course.category === 'Design' && <Palette size={20} />}
-          {course.category.includes('Class') && <BookOpen size={20} />}
-          {course.category === 'Admission' && <User size={20} />}
+      <div className="relative h-48 overflow-hidden">
+        <img 
+          src={`https://picsum.photos/seed/${course.id}/800/600`} 
+          alt={course.title}
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+          referrerPolicy="no-referrer"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute top-4 left-4">
+          <span className="rounded-full bg-white/90 backdrop-blur-md px-3 py-1 text-[10px] font-bold text-indigo-600 uppercase tracking-wider shadow-sm">
+            {course.category}
+          </span>
+        </div>
+        <div className="absolute bottom-4 left-4 right-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+          <div className="flex items-center gap-2 text-white text-xs font-medium">
+            <BookOpen size={14} />
+            <span>{course.modules.length} Lessons</span>
+          </div>
         </div>
       </div>
-      
-      <h3 className="mb-2 text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
-        {course.title}
-      </h3>
-      <p className="mb-6 flex-grow text-sm leading-relaxed text-slate-600">
-        {course.description}
-      </p>
-      
-      <div className="flex items-center justify-between border-t border-slate-100 pt-4">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
-            <User size={14} />
+
+      <div className="flex flex-col p-6 pt-5">
+        <div className="mb-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 ring-4 ring-indigo-50/50">
+              {course.category === 'Web Development' && <Layout size={14} />}
+              {course.category === 'Data Science' && <Cpu size={14} />}
+              {course.category === 'Design' && <Palette size={14} />}
+              {course.category.includes('Class') && <BookOpen size={14} />}
+              {course.category === 'Admission' && <User size={14} />}
+            </div>
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{course.instructor}</span>
           </div>
-          <span className="text-xs font-medium text-slate-500">{course.instructor}</span>
         </div>
-        <button 
-          onClick={() => navigate(`/${course.id}`)} 
-          className="flex items-center gap-1 text-sm font-bold text-indigo-600 group-hover:translate-x-1 transition-transform cursor-pointer"
-        >
-          View Course <ChevronRight size={16} />
-        </button>
+        
+        <h3 className="mb-3 text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
+          {course.title}
+        </h3>
+        <p className="mb-6 text-sm leading-relaxed text-slate-500 line-clamp-2">
+          {course.description}
+        </p>
+        
+        <div className="mt-auto pt-5 border-t border-slate-50">
+          <button 
+            onClick={() => navigate(`/${course.id}`)} 
+            className="w-full flex items-center justify-center gap-2 rounded-xl bg-slate-50 py-3 text-sm font-bold text-slate-900 transition-all hover:bg-indigo-600 hover:text-white active:scale-95 cursor-pointer"
+          >
+            Start Learning <ChevronRight size={16} />
+          </button>
+        </div>
       </div>
     </motion.div>
   );
@@ -131,34 +153,48 @@ const CourseCard = ({ course }: { course: Course }) => {
 
 const HomePage = ({ courses }: { courses: Course[] }) => {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
-      <header className="mb-12 sm:mb-16 text-center">
+    <div className="mx-auto max-w-7xl px-6 py-12 sm:py-20 sm:px-8 lg:px-10">
+      <header className="mb-20 sm:mb-28 text-center relative">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px] -z-10" />
+        
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="inline-block mb-4 rounded-full bg-indigo-50 px-4 py-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-widest text-indigo-600"
+          className="inline-flex items-center gap-2 mb-8 rounded-full bg-indigo-50 px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 border border-indigo-100/50"
         >
-          Learning Platform
+          <div className="h-1.5 w-1.5 rounded-full bg-indigo-600 animate-pulse" />
+          Learning Platform 2.0
         </motion.div>
+        
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-4 font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl leading-[1.1]"
+          className="mb-8 font-sans text-5xl font-black tracking-tight text-slate-900 sm:text-7xl lg:text-8xl leading-[0.95]"
         >
           Master the Art of <br className="hidden sm:block" />
-          <span className="italic text-indigo-600 underline decoration-indigo-200 underline-offset-8">Coding</span>
+          <span className="relative inline-block mt-2">
+            <span className="relative z-10 italic text-indigo-600">Coding</span>
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: '100%' }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              className="absolute bottom-2 left-0 h-4 bg-indigo-100 -z-10 rounded-full" 
+            />
+          </span>
         </motion.h1>
+        
         <motion.p 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="mx-auto max-w-2xl text-base sm:text-lg text-slate-600 px-4"
+          className="mx-auto max-w-2xl text-lg sm:text-xl text-slate-500 font-medium leading-relaxed"
         >
-          Explore our curated selection of programming courses. Learn by doing with real-world code examples and expert guidance.
+          Explore our curated selection of high-end programming courses. 
+          Learn by doing with real-world code examples and expert guidance.
         </motion.p>
       </header>
 
-      <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-8 sm:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <AnimatePresence mode="popLayout">
           {courses.map((course) => (
             <CourseCard key={course.id} course={course} />
@@ -186,12 +222,15 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
   if (!course) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+        <div className="h-20 w-20 rounded-3xl bg-slate-50 flex items-center justify-center text-slate-300 mb-2">
+          <Search size={40} />
+        </div>
         <h2 className="text-2xl font-bold text-slate-900">Course Not Found</h2>
         <button 
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-indigo-600 hover:underline"
+          className="flex items-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-bold text-white transition-all hover:bg-slate-800 active:scale-95"
         >
-          <ArrowLeft size={20} /> Back to Home
+          <ArrowLeft size={18} /> Back to Home
         </button>
       </div>
     );
@@ -202,51 +241,55 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
   );
 
   const activeModule = course.modules.find(m => m.id === activeModuleId) || course.modules[0];
+  const activeIndex = course.modules.findIndex(m => m.id === activeModuleId);
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-white">
       {/* Mobile Sidebar Toggle */}
-      <div className="lg:hidden sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex items-center justify-between shadow-sm">
+      <div className="lg:hidden sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-100 px-4 py-3 flex items-center justify-between shadow-sm">
         <button 
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="flex items-center gap-2 text-slate-900 font-bold text-sm bg-slate-50 px-3 py-2 rounded-xl active:scale-95 transition-all"
+          className="flex items-center gap-2 text-slate-900 font-bold text-xs bg-slate-100/50 px-4 py-2.5 rounded-2xl active:scale-95 transition-all"
         >
-          {isSidebarOpen ? <X size={18} /> : <Menu size={18} />}
-          <span>Content</span>
+          {isSidebarOpen ? <X size={16} /> : <Menu size={16} />}
+          <span>Course Menu</span>
         </button>
         <div className="flex flex-col items-end">
-          <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest leading-none mb-1">Active Course</span>
-          <span className="text-xs font-bold text-slate-900 truncate max-w-[120px]">{course.title}</span>
+          <span className="text-[9px] font-bold text-indigo-600 uppercase tracking-[0.2em] leading-none mb-1">Learning</span>
+          <span className="text-xs font-bold text-slate-900 truncate max-w-[140px]">{course.title}</span>
         </div>
       </div>
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-full sm:w-80 bg-white border-r border-slate-100 transform transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] lg:relative lg:translate-x-0 lg:z-0
+        fixed inset-y-0 left-0 z-50 w-full sm:w-85 bg-white border-r border-slate-100 transform transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] lg:relative lg:translate-x-0 lg:z-0
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="p-6 border-b border-slate-50">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Course Content</h2>
+        <div className="p-8 border-b border-slate-50">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Curriculum</h2>
+              <p className="text-xs font-medium text-slate-400 mt-1">{course.modules.length} lessons to complete</p>
+            </div>
             <button 
-              className="lg:hidden p-2 hover:bg-slate-50 rounded-full transition-colors" 
+              className="lg:hidden p-2.5 hover:bg-slate-50 rounded-2xl transition-colors" 
               onClick={() => setIsSidebarOpen(false)}
             >
               <X size={20} className="text-slate-400" />
             </button>
           </div>
           <div className="relative group">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={16} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={16} />
             <input 
               type="text" 
-              placeholder="Search lessons..." 
+              placeholder="Find a lesson..." 
               value={moduleSearch}
               onChange={(e) => setModuleSearch(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all"
+              className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 py-3.5 pl-11 pr-4 text-sm outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all placeholder:text-slate-400"
             />
           </div>
         </div>
-        <nav className="p-4 space-y-1.5 overflow-y-auto h-[calc(100vh-180px)] custom-scrollbar">
+        <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100vh-220px)] custom-scrollbar">
           {filteredModules.map((module, index) => (
             <button
               key={module.id}
@@ -255,129 +298,182 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
                 setIsSidebarOpen(false);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`w-full flex items-start gap-3.5 p-3.5 rounded-2xl text-left transition-all duration-200 ${
+              className={`w-full flex items-start gap-4 p-4 rounded-[1.5rem] text-left transition-all duration-300 group ${
                 activeModuleId === module.id 
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' 
-                  : 'text-slate-600 hover:bg-slate-50 active:bg-slate-100'
+                  ? 'bg-indigo-600 text-white shadow-[0_10px_25px_rgba(79,70,229,0.2)]' 
+                  : 'text-slate-600 hover:bg-slate-50 active:scale-[0.98]'
               }`}
             >
-              <div className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-bold border ${
-                activeModuleId === module.id ? 'bg-white/20 border-white/30 text-white' : 'bg-slate-100 border-slate-200 text-slate-500'
+              <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl text-[11px] font-bold border transition-colors ${
+                activeModuleId === module.id 
+                  ? 'bg-white/20 border-white/30 text-white' 
+                  : 'bg-white border-slate-100 text-slate-400 group-hover:border-indigo-200 group-hover:text-indigo-600'
               }`}>
-                {index + 1}
+                {(index + 1).toString().padStart(2, '0')}
               </div>
               <div className="flex-grow min-w-0">
-                <p className={`text-sm font-bold leading-tight truncate ${activeModuleId === module.id ? 'text-white' : 'text-slate-900'}`}>
+                <p className={`text-sm font-bold leading-tight mb-1.5 ${activeModuleId === module.id ? 'text-white' : 'text-slate-900'}`}>
                   {module.title}
                 </p>
-                <div className={`mt-1 flex items-center gap-1 text-[10px] ${activeModuleId === module.id ? 'text-white/70' : 'text-slate-400'}`}>
-                  <PlayCircle size={10} />
-                  <span>Video Lesson</span>
+                <div className={`flex items-center gap-3 ${activeModuleId === module.id ? 'text-white/70' : 'text-slate-400'}`}>
+                  <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider">
+                    <PlayCircle size={12} />
+                    <span>Video</span>
+                  </div>
+                  {activeModuleId === module.id && (
+                    <div className="h-1 w-1 rounded-full bg-white/40" />
+                  )}
+                  {activeModuleId === module.id && (
+                    <span className="text-[10px] font-bold uppercase tracking-wider">Now Playing</span>
+                  )}
                 </div>
               </div>
             </button>
           ))}
           {filteredModules.length === 0 && (
-            <div className="text-center py-12 px-4">
-              <div className="bg-slate-50 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
-                <Search size={20} className="text-slate-300" />
+            <div className="text-center py-16 px-6">
+              <div className="bg-slate-50 rounded-3xl w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <Search size={24} className="text-slate-200" />
               </div>
-              <p className="text-sm font-medium text-slate-400">No lessons found matching your search.</p>
+              <p className="text-sm font-bold text-slate-400">No results found</p>
+              <p className="text-xs text-slate-300 mt-1">Try a different keyword</p>
             </div>
           )}
         </nav>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-grow bg-slate-50/30">
-        <div className="max-w-4xl mx-auto px-4 py-6 sm:py-10 sm:px-6 lg:px-10">
-          {/* Video Player */}
-          <div className="aspect-video w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-black shadow-2xl mb-8 sm:mb-10 ring-1 ring-black/5">
-            <iframe
-              src={activeModule.videoUrl}
-              title={activeModule.title}
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+      <main className="flex-grow bg-slate-50/20 overflow-y-auto h-screen custom-scrollbar">
+        <div className="max-w-5xl mx-auto px-4 py-8 sm:py-12 sm:px-8 lg:px-12">
+          {/* Video Player Container */}
+          <div className="relative group mb-10">
+            <div className="absolute -inset-4 bg-indigo-500/5 rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            <div className="relative aspect-video w-full rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden bg-slate-900 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] ring-1 ring-white/10">
+              <iframe
+                src={activeModule.videoUrl}
+                title={activeModule.title}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
           </div>
 
-          {/* Details */}
-          <div className="mb-10 sm:mb-12">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Lesson {course.modules.findIndex(m => m.id === activeModuleId) + 1}</span>
+          {/* Header Info */}
+          <div className="mb-12">
+            <div className="flex flex-wrap items-center gap-3 mb-6">
+              <span className="bg-indigo-50 text-indigo-600 text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-[0.15em] border border-indigo-100/50">
+                Module {(activeIndex + 1).toString().padStart(2, '0')}
+              </span>
+              <div className="h-1 w-1 rounded-full bg-slate-200" />
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">
+                {course.instructor}
+              </span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-4 tracking-tight leading-tight">{activeModule.title}</h1>
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-3xl">
+            <h1 className="text-3xl sm:text-5xl font-bold text-slate-900 mb-6 tracking-tight leading-[1.1]">{activeModule.title}</h1>
+            <p className="text-lg sm:text-xl text-slate-500 leading-relaxed max-w-3xl font-medium">
               {activeModule.description}
             </p>
           </div>
 
-          {/* Resources */}
-          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 mb-12 sm:mb-16">
-            {activeModule.pdfUrl && activeModule.pdfUrl !== '#' ? (
-              <button 
-                onClick={() => window.open(activeModule.pdfUrl, '_blank')}
-                className="group flex items-center gap-4 p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white hover:border-indigo-500 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full text-left cursor-pointer"
-              >
-                <div className="h-12 w-12 shrink-0 rounded-xl bg-red-50 flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all duration-300">
-                  <FileText size={24} />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="font-bold text-slate-900 truncate">Lecture PDF</h4>
-                  <p className="text-xs text-slate-500">Download class notes</p>
-                </div>
-              </button>
-            ) : (
-              <div className="flex flex-col items-center justify-center p-6 rounded-2xl border border-red-100 bg-red-50/30 text-center">
-                <FileText size={24} className="text-red-400 mb-2" />
-                <p className="text-xs sm:text-sm font-bold text-red-600">এই কন্টেন্টের জন্য কোন লেকচার শীট পাওয়া যায়নি।</p>
-              </div>
-            )}
-            
-            {activeModule.practiceSheetUrl && activeModule.practiceSheetUrl !== '#' ? (
-              <button 
-                onClick={() => window.open(activeModule.practiceSheetUrl, '_blank')}
-                className="group flex items-center gap-4 p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white hover:border-indigo-500 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full text-left cursor-pointer"
-              >
-                <div className="h-12 w-12 shrink-0 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
-                  <Layout size={24} />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="font-bold text-slate-900 truncate">Practice Sheet</h4>
-                  <p className="text-xs text-slate-500">Test your knowledge</p>
-                </div>
-              </button>
-            ) : (
-              <div className="flex flex-col items-center justify-center p-6 rounded-2xl border border-red-100 bg-red-50/30 text-center">
-                <Layout size={24} className="text-red-400 mb-2" />
-                <p className="text-xs sm:text-sm font-bold text-red-600">এই কন্টেন্টের জন্য কোন প্রেক্টিসীট পাওয়া যায়নি।</p>
-              </div>
-            )}
+          {/* Resources Grid */}
+          <div className="grid gap-6 sm:grid-cols-2 mb-16">
+            <ResourceCard 
+              title="Lecture Notes" 
+              subtitle="Comprehensive PDF guide" 
+              icon={<FileText size={24} />} 
+              url={activeModule.pdfUrl}
+              color="red"
+            />
+            <ResourceCard 
+              title="Practice Sheet" 
+              subtitle="Test your understanding" 
+              icon={<Layout size={24} />} 
+              url={activeModule.practiceSheetUrl}
+              color="emerald"
+            />
           </div>
 
-          {/* Routine Link */}
-          <div className="border-t border-slate-200 pt-10 pb-10 text-center">
+          {/* Footer Navigation */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-12 border-t border-slate-100">
             <button 
               onClick={() => window.open(course.routineUrl, '_blank')}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-10 py-4 rounded-2xl bg-slate-900 text-white font-bold hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200 hover:shadow-indigo-200 active:scale-95 cursor-pointer"
+              className="group flex items-center gap-3 px-8 py-4 rounded-2xl bg-slate-900 text-white font-bold hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200 hover:shadow-indigo-200 active:scale-95"
             >
-              <Calendar size={20} />
-              View Course Routine
-              <ExternalLink size={16} className="opacity-50" />
+              <Calendar size={18} className="group-hover:rotate-12 transition-transform" />
+              View Full Routine
+              <ExternalLink size={14} className="opacity-40" />
             </button>
+            
+            <div className="flex items-center gap-4">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Share this course</span>
+              <div className="flex gap-2">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="h-10 w-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all cursor-pointer">
+                    <ExternalLink size={16} />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </main>
 
       {/* Mobile Sidebar Overlay */}
-      {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm lg:hidden transition-opacity duration-300"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-md lg:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
+  );
+};
+
+const ResourceCard = ({ title, subtitle, icon, url, color }: { title: string; subtitle: string; icon: React.ReactNode; url: string; color: string }) => {
+  const isAvailable = url && url !== '#';
+  
+  if (!isAvailable) {
+    return (
+      <div className="flex items-center gap-5 p-6 rounded-[2rem] border border-slate-100 bg-slate-50/50 opacity-60 grayscale">
+        <div className="h-14 w-14 shrink-0 rounded-2xl bg-white flex items-center justify-center text-slate-300 shadow-sm">
+          {icon}
+        </div>
+        <div>
+          <h4 className="font-bold text-slate-400">{title}</h4>
+          <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mt-1">Not Available</p>
+        </div>
+      </div>
+    );
+  }
+
+  const colorClasses: Record<string, string> = {
+    red: "bg-red-50 text-red-600 group-hover:bg-red-600",
+    emerald: "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600",
+    indigo: "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600",
+  };
+
+  return (
+    <button 
+      onClick={() => window.open(url, '_blank')}
+      className="group flex items-center gap-5 p-6 rounded-[2rem] border border-slate-100 bg-white hover:border-indigo-500/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-500 w-full text-left cursor-pointer"
+    >
+      <div className={`h-14 w-14 shrink-0 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-sm group-hover:text-white group-hover:shadow-lg ${colorClasses[color]}`}>
+        {icon}
+      </div>
+      <div className="min-w-0">
+        <h4 className="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{title}</h4>
+        <p className="text-xs font-medium text-slate-400 mt-0.5">{subtitle}</p>
+      </div>
+      <div className="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
+        <ChevronRight size={20} className="text-indigo-600" />
+      </div>
+    </button>
   );
 };
 
@@ -392,66 +488,79 @@ const AdminLoginPage = ({ onLogin }: { onLogin: (user: string, key: string) => b
     if (onLogin(username, key)) {
       navigate('/admin-panel');
     } else {
-      setError('Invalid username or secret key.');
+      setError('Invalid credentials. Please try again.');
     }
   };
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center px-4">
+    <div className="flex min-h-[85vh] items-center justify-center px-6 relative overflow-hidden">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-[120px] -z-10" />
+      
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-md overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-lg overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)]"
       >
-        <div className="bg-slate-900 p-8 text-center text-white">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-600">
-            <LogIn size={32} />
+        <div className="bg-slate-900 p-10 text-center text-white relative">
+          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(79,70,229,0.2),transparent)]" />
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-indigo-600 shadow-xl shadow-indigo-500/20 relative z-10">
+            <LogIn size={36} />
           </div>
-          <h2 className="text-2xl font-bold">Admin Portal</h2>
-          <p className="mt-2 text-sm text-slate-400">Access your instructor dashboard</p>
+          <h2 className="text-3xl font-black tracking-tight relative z-10">Admin Portal</h2>
+          <p className="mt-3 text-slate-400 font-medium relative z-10">Secure access to your dashboard</p>
         </div>
         
-        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="p-10 space-y-8">
           {error && (
-            <div className="rounded-xl bg-red-50 p-4 text-sm font-medium text-red-600 border border-red-100">
+            <motion.div 
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="rounded-2xl bg-red-50 p-4 text-sm font-bold text-red-600 border border-red-100 flex items-center gap-3"
+            >
+              <div className="h-2 w-2 rounded-full bg-red-600 animate-pulse" />
               {error}
-            </div>
+            </motion.div>
           )}
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">User Name</label>
-            <input 
-              type="text" 
-              required
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none transition-all focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
-              placeholder="Enter username"
-            />
+          
+          <div className="space-y-6">
+            <div className="group">
+              <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-focus-within:text-indigo-600 transition-colors">User Name</label>
+              <input 
+                type="text" 
+                required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-4 text-sm font-medium outline-none transition-all focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 placeholder:text-slate-300"
+                placeholder="Your instructor ID"
+              />
+            </div>
+            
+            <div className="group">
+              <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-focus-within:text-indigo-600 transition-colors">Secret Key</label>
+              <input 
+                type="password" 
+                required
+                value={key}
+                onChange={(e) => setKey(e.target.value)}
+                className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-4 text-sm font-medium outline-none transition-all focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 placeholder:text-slate-300"
+                placeholder="••••••••••••"
+              />
+            </div>
           </div>
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">Secret Key</label>
-            <input 
-              type="password" 
-              required
-              value={key}
-              onChange={(e) => setKey(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none transition-all focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
-              placeholder="Enter key"
-            />
-          </div>
+
           <button 
             type="submit"
-            className="w-full rounded-xl bg-indigo-600 py-4 font-bold text-white shadow-lg shadow-indigo-200 transition-all hover:bg-indigo-700 active:scale-[0.98]"
+            className="w-full rounded-2xl bg-indigo-600 py-5 font-black text-white shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] transition-all hover:bg-indigo-700 hover:shadow-[0_25px_50px_-12px_rgba(79,70,229,0.4)] active:scale-[0.98]"
           >
-            Sign In
+            Authenticate Access
           </button>
           
           <button 
             type="button"
             onClick={() => navigate('/')}
-            className="w-full text-sm font-medium text-slate-500 hover:text-slate-800"
+            className="w-full text-xs font-bold text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest"
           >
-            Cancel and return home
+            Return to Homepage
           </button>
         </form>
       </motion.div>
@@ -480,11 +589,14 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+    <div className="mx-auto max-w-7xl px-6 py-12 sm:py-16 sm:px-8 lg:px-10">
+      <div className="mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-8">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Admin Dashboard</h1>
-          <p className="text-sm sm:text-base text-slate-500">Manage your courses and learning content</p>
+          <div className="inline-flex items-center gap-2 mb-4 rounded-full bg-indigo-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 border border-indigo-100/50">
+            Management
+          </div>
+          <h1 className="text-4xl font-black tracking-tight text-slate-900">Admin Dashboard</h1>
+          <p className="mt-3 text-lg text-slate-500 font-medium">Manage your curriculum and student resources</p>
         </div>
         <button 
           onClick={() => {
@@ -502,189 +614,207 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
               modules: []
             });
           }}
-          className="flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-6 py-4 font-bold text-white shadow-xl shadow-indigo-100 transition-all hover:bg-indigo-700 active:scale-95"
+          className="flex items-center justify-center gap-3 rounded-[1.5rem] bg-indigo-600 px-8 py-4 font-black text-white shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] transition-all hover:bg-indigo-700 active:scale-95"
         >
           <Plus size={20} />
-          Add New Course
+          Create New Course
         </button>
       </div>
 
-      <div className="grid gap-4 sm:gap-6">
+      <div className="grid gap-6">
         {courses.map(course => (
-          <div key={course.id} className="flex flex-col sm:flex-row sm:items-center justify-between rounded-2xl border border-slate-100 bg-white p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-4 mb-4 sm:mb-0">
-              <div className="h-12 w-12 shrink-0 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
-                <BookOpen size={24} />
+          <div key={course.id} className="group flex flex-col sm:flex-row sm:items-center justify-between rounded-[2rem] border border-slate-100 bg-white p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-500">
+            <div className="flex items-center gap-6 mb-6 sm:mb-0">
+              <div className="h-16 w-16 shrink-0 rounded-[1.25rem] bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform duration-500">
+                <BookOpen size={28} />
               </div>
               <div className="min-w-0">
-                <h3 className="font-bold text-slate-900 truncate">{course.title}</h3>
-                <p className="text-xs sm:text-sm text-slate-500">{course.modules.length} Lessons • {course.instructor}</p>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">{course.category}</span>
+                  <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">• {course.modules.length} Lessons</span>
+                </div>
+                <h3 className="text-xl font-black text-slate-900 truncate group-hover:text-indigo-600 transition-colors">{course.title}</h3>
+                <p className="text-sm text-slate-400 font-medium mt-1">Instructor: {course.instructor}</p>
               </div>
             </div>
-            <div className="flex items-center justify-end gap-2 border-t sm:border-t-0 pt-4 sm:pt-0">
+            <div className="flex items-center justify-end gap-3 border-t sm:border-t-0 pt-6 sm:pt-0">
               <button 
                 onClick={() => {
                   setIsAdding(false);
                   setEditingCourse(course);
                 }}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all font-bold text-sm"
+                className="flex items-center gap-2 px-5 py-3 rounded-2xl text-slate-600 bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 transition-all font-bold text-sm"
               >
                 <Edit size={18} />
-                <span className="sm:hidden">Edit</span>
+                <span>Edit Details</span>
               </button>
               <button 
                 onClick={() => navigate(`/${course.id}`)} 
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all font-bold text-sm cursor-pointer"
+                className="flex items-center gap-2 px-5 py-3 rounded-2xl text-white bg-slate-900 hover:bg-indigo-600 transition-all font-bold text-sm cursor-pointer shadow-lg shadow-slate-100"
               >
                 <ExternalLink size={18} />
-                <span className="sm:hidden">View</span>
+                <span>Live View</span>
               </button>
             </div>
           </div>
         ))}
         {courses.length === 0 && (
-          <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
-            <BookOpen size={48} className="mx-auto text-slate-200 mb-4" />
-            <p className="text-slate-400 font-medium">No courses available. Add your first course to get started.</p>
+          <div className="text-center py-32 bg-slate-50/50 rounded-[3rem] border-2 border-dashed border-slate-200">
+            <div className="bg-white rounded-3xl w-20 h-20 flex items-center justify-center mx-auto mb-6 shadow-sm">
+              <BookOpen size={40} className="text-slate-200" />
+            </div>
+            <p className="text-slate-400 font-bold text-lg">No courses found</p>
+            <p className="text-slate-300 text-sm mt-1">Ready to start your teaching journey?</p>
           </div>
         )}
       </div>
 
       {editingCourse && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-md">
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-6 sm:p-10 shadow-2xl custom-scrollbar"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-[3rem] bg-white p-8 sm:p-12 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.2)] custom-scrollbar"
           >
-            <div className="mb-8 flex items-center justify-between sticky top-0 bg-white z-10 pb-4 border-b border-slate-50">
-              <h2 className="text-2xl font-bold text-slate-900">{isAdding ? 'Add New Course' : 'Edit Course'}</h2>
-              <button onClick={() => setEditingCourse(null)} className="p-2 hover:bg-slate-50 rounded-full transition-colors">
-                <X size={24} className="text-slate-400" />
+            <div className="mb-10 flex items-center justify-between sticky top-0 bg-white z-10 pb-6 border-b border-slate-50">
+              <div>
+                <h2 className="text-3xl font-black text-slate-900 tracking-tight">{isAdding ? 'Create New Course' : 'Refine Course'}</h2>
+                <p className="text-sm text-slate-400 font-medium mt-1">Configure your learning experience</p>
+              </div>
+              <button onClick={() => setEditingCourse(null)} className="p-3 hover:bg-slate-50 rounded-2xl transition-colors text-slate-400">
+                <X size={28} />
               </button>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 mb-10">
-              <div className="space-y-5">
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Course ID (Unique)</label>
+            <div className="grid gap-8 md:grid-cols-2 mb-12">
+              <div className="space-y-6">
+                <div className="group">
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Course ID (Unique)</label>
                   <input 
                     type="text" 
                     disabled={!isAdding}
                     value={editingCourse.id}
                     onChange={e => setEditingCourse({...editingCourse, id: e.target.value})}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 outline-none focus:border-indigo-500 focus:bg-white transition-all disabled:opacity-50"
-                    placeholder="e.g. react-basics"
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all disabled:opacity-50 font-medium"
+                    placeholder="e.g. react-mastery"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Title</label>
+                <div className="group">
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Course Title</label>
                   <input 
                     type="text" 
                     value={editingCourse.title}
                     onChange={e => setEditingCourse({...editingCourse, title: e.target.value})}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 outline-none focus:border-indigo-500 focus:bg-white transition-all"
-                    placeholder="Course Title"
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-medium"
+                    placeholder="Enter a compelling title"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Instructor</label>
+                <div className="group">
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Instructor Name</label>
                   <input 
                     type="text" 
                     value={editingCourse.instructor}
                     onChange={e => setEditingCourse({...editingCourse, instructor: e.target.value})}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 outline-none focus:border-indigo-500 focus:bg-white transition-all"
-                    placeholder="Instructor Name"
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-medium"
+                    placeholder="Who is teaching?"
                   />
                 </div>
               </div>
-              <div className="space-y-5">
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Category</label>
-                  <select 
-                    value={editingCourse.category}
-                    onChange={e => setEditingCourse({...editingCourse, category: e.target.value})}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 outline-none focus:border-indigo-500 focus:bg-white transition-all appearance-none"
-                  >
-                    <option>Web Development</option>
-                    <option>Data Science</option>
-                    <option>Design</option>
-                    <option>Class 5</option>
-                    <option>Class 6</option>
-                    <option>Class 7</option>
-                    <option>Class 8</option>
-                    <option>Class 9</option>
-                    <option>Class 10</option>
-                    <option>Class 11</option>
-                    <option>Class 12</option>
-                    <option>Admission</option>
-                  </select>
+              <div className="space-y-6">
+                <div className="group">
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Learning Category</label>
+                  <div className="relative">
+                    <select 
+                      value={editingCourse.category}
+                      onChange={e => setEditingCourse({...editingCourse, category: e.target.value})}
+                      className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all appearance-none font-medium"
+                    >
+                      <option>Web Development</option>
+                      <option>Data Science</option>
+                      <option>Design</option>
+                      <option>Class 5</option>
+                      <option>Class 6</option>
+                      <option>Class 7</option>
+                      <option>Class 8</option>
+                      <option>Class 9</option>
+                      <option>Class 10</option>
+                      <option>Class 11</option>
+                      <option>Class 12</option>
+                      <option>Admission</option>
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                      <ChevronRight size={18} className="rotate-90" />
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Description</label>
+                <div className="group">
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Course Overview</label>
                   <textarea 
                     rows={3}
                     value={editingCourse.description}
                     onChange={e => setEditingCourse({...editingCourse, description: e.target.value})}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 outline-none focus:border-indigo-500 focus:bg-white transition-all resize-none"
-                    placeholder="Short course overview..."
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all resize-none font-medium"
+                    placeholder="What will students learn?"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Routine URL</label>
+                <div className="group">
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Routine URL</label>
                   <input 
                     type="text" 
                     value={editingCourse.routineUrl}
                     onChange={e => setEditingCourse({...editingCourse, routineUrl: e.target.value})}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 outline-none focus:border-indigo-500 focus:bg-white transition-all"
-                    placeholder="https://..."
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-medium"
+                    placeholder="Link to course schedule"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="mt-12">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-slate-900">Course Modules</h3>
+            <div className="mt-16">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-2xl font-black text-slate-900 tracking-tight">Course Modules</h3>
+                  <p className="text-sm text-slate-400 font-medium mt-1">Structure your lessons</p>
+                </div>
                 <button 
                   onClick={() => setEditingCourse({
                     ...editingCourse,
                     modules: [...editingCourse.modules, { id: Math.random().toString(36).substr(2, 9), title: '', videoUrl: '', description: '', pdfUrl: '', practiceSheetUrl: '' }]
                   })}
-                  className="flex items-center gap-2 text-sm font-bold text-indigo-600 bg-indigo-50 px-4 py-2 rounded-xl hover:bg-indigo-100 transition-all"
+                  className="flex items-center gap-2 text-sm font-black text-indigo-600 bg-indigo-50 px-6 py-3 rounded-2xl hover:bg-indigo-100 transition-all active:scale-95"
                 >
-                  <Plus size={16} />
-                  Add Module
+                  <Plus size={18} />
+                  Add New Lesson
                 </button>
               </div>
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {editingCourse.modules.map((m, i) => (
-                  <div key={m.id || i} className="relative rounded-2xl border border-slate-100 bg-slate-50/30 p-5 sm:p-6 group">
+                  <div key={m.id || i} className="relative rounded-[2.5rem] border border-slate-100 bg-slate-50/30 p-8 sm:p-10 group">
                     <button 
                       onClick={() => {
                         const newModules = editingCourse.modules.filter((_, idx) => idx !== i);
                         setEditingCourse({...editingCourse, modules: newModules});
                       }}
-                      className="absolute -top-2 -right-2 bg-white border border-slate-100 text-slate-400 hover:text-red-500 p-1.5 rounded-full shadow-sm transition-all"
+                      className="absolute -top-3 -right-3 bg-white border border-slate-100 text-slate-300 hover:text-red-500 hover:border-red-100 p-2.5 rounded-full shadow-lg transition-all z-10"
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={18} />
                     </button>
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <div className="sm:col-span-2">
-                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Module Title</label>
+                    <div className="grid gap-6 sm:grid-cols-2">
+                      <div className="sm:col-span-2 group">
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2.5 group-focus-within:text-indigo-600 transition-colors">Lesson Title</label>
                         <input 
-                          placeholder="e.g. Introduction to React"
+                          placeholder="e.g. Master the basics of React"
                           value={m.title}
                           onChange={e => {
                             const newModules = [...editingCourse.modules];
                             newModules[i].title = e.target.value;
                             setEditingCourse({...editingCourse, modules: newModules});
                           }}
-                          className="w-full rounded-lg border border-slate-200 p-2.5 text-sm outline-none focus:border-indigo-500 bg-white"
+                          className="w-full rounded-xl border border-slate-100 p-3.5 text-sm font-bold outline-none focus:border-indigo-500/30 bg-white"
                         />
                       </div>
-                      <div>
-                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Video URL</label>
+                      <div className="group">
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2.5 group-focus-within:text-indigo-600 transition-colors">Video Embed URL</label>
                         <input 
                           placeholder="https://www.youtube.com/embed/..."
                           value={m.videoUrl}
@@ -693,33 +823,33 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                             newModules[i].videoUrl = e.target.value;
                             setEditingCourse({...editingCourse, modules: newModules});
                           }}
-                          className="w-full rounded-lg border border-slate-200 p-2.5 text-sm outline-none focus:border-indigo-500 bg-white"
+                          className="w-full rounded-xl border border-slate-100 p-3.5 text-sm font-bold outline-none focus:border-indigo-500/30 bg-white"
                         />
                       </div>
-                      <div>
-                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">PDF URL</label>
+                      <div className="group">
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2.5 group-focus-within:text-indigo-600 transition-colors">Lecture PDF</label>
                         <input 
-                          placeholder="https://..."
+                          placeholder="Link to class notes"
                           value={m.pdfUrl}
                           onChange={e => {
                             const newModules = [...editingCourse.modules];
                             newModules[i].pdfUrl = e.target.value;
                             setEditingCourse({...editingCourse, modules: newModules});
                           }}
-                          className="w-full rounded-lg border border-slate-200 p-2.5 text-sm outline-none focus:border-indigo-500 bg-white"
+                          className="w-full rounded-xl border border-slate-100 p-3.5 text-sm font-bold outline-none focus:border-indigo-500/30 bg-white"
                         />
                       </div>
-                      <div className="sm:col-span-2">
-                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Practice Sheet URL</label>
+                      <div className="sm:col-span-2 group">
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2.5 group-focus-within:text-indigo-600 transition-colors">Practice Sheet URL</label>
                         <input 
-                          placeholder="https://..."
+                          placeholder="Link to exercises"
                           value={m.practiceSheetUrl}
                           onChange={e => {
                             const newModules = [...editingCourse.modules];
                             newModules[i].practiceSheetUrl = e.target.value;
                             setEditingCourse({...editingCourse, modules: newModules});
                           }}
-                          className="w-full rounded-lg border border-slate-200 p-2.5 text-sm outline-none focus:border-indigo-500 bg-white"
+                          className="w-full rounded-xl border border-slate-100 p-3.5 text-sm font-bold outline-none focus:border-indigo-500/30 bg-white"
                         />
                       </div>
                     </div>
@@ -728,19 +858,19 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
               </div>
             </div>
 
-            <div className="mt-12 flex flex-col sm:flex-row justify-end gap-3 sticky bottom-0 bg-white pt-6 border-t border-slate-50">
+            <div className="mt-16 flex flex-col sm:flex-row justify-end gap-4 sticky bottom-0 bg-white/80 backdrop-blur-xl pt-8 border-t border-slate-50">
               <button 
                 onClick={() => setEditingCourse(null)}
-                className="order-2 sm:order-1 rounded-2xl px-8 py-4 font-bold text-slate-500 hover:bg-slate-50 transition-all"
+                className="order-2 sm:order-1 rounded-2xl px-10 py-5 font-black text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all uppercase tracking-widest text-xs"
               >
                 Discard Changes
               </button>
               <button 
                 onClick={() => handleSave(editingCourse)}
-                className="order-1 sm:order-2 flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-10 py-4 font-bold text-white shadow-xl shadow-indigo-100 transition-all hover:bg-indigo-700 active:scale-95"
+                className="order-1 sm:order-2 flex items-center justify-center gap-3 rounded-[1.5rem] bg-indigo-600 px-12 py-5 font-black text-white shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] transition-all hover:bg-indigo-700 active:scale-95"
               >
                 <Save size={20} />
-                Save Course
+                Finalize & Save
               </button>
             </div>
           </motion.div>

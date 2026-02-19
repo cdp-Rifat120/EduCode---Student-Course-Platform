@@ -57,7 +57,7 @@ if (courseCount.count === 0) {
     'https://example.com/react-routine'
   );
 
-  insertModule.run('m1', 'react-basics', 'Introduction to React', 'https://www.youtube.com/embed/w7ejDZ8SWv8', 'Overview of React.', '#', '#');
+  insertModule.run('m1', 'react-basics', 'Introduction to React', 'https://www.youtube.com/watch?v=Ke90Tje7VS0', 'Overview of React.', '#', '#');
 }
 
 async function startServer() {
