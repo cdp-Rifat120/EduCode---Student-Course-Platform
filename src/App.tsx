@@ -32,7 +32,9 @@ import {
   Trash2,
   Save,
   LogOut,
-  Settings
+  Settings,
+  Briefcase,
+  GraduationCap
 } from 'lucide-react';
 import { Course, CourseModule } from './types';
 
@@ -123,11 +125,11 @@ const CourseCard = ({ course }: { course: Course }) => {
         <div className="mb-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 ring-4 ring-indigo-50/50">
-              {course.category === 'Web Development' && <Layout size={14} />}
-              {course.category === 'Data Science' && <Cpu size={14} />}
-              {course.category === 'Design' && <Palette size={14} />}
-              {course.category.includes('Class') && <BookOpen size={14} />}
-              {course.category === 'Admission' && <User size={14} />}
+              {course.category === 'Skill Development' && <Code size={14} />}
+              {course.category === 'Academic' && <BookOpen size={14} />}
+              {course.category === 'Admission' && <GraduationCap size={14} />}
+              {course.category === 'Jobs' && <Briefcase size={14} />}
+              {!['Skill Development', 'Academic', 'Admission', 'Jobs'].includes(course.category) && <Layout size={14} />}
             </div>
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{course.instructor}</span>
           </div>
@@ -743,18 +745,10 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                       onChange={e => setEditingCourse({...editingCourse, category: e.target.value})}
                       className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all appearance-none font-medium"
                     >
-                      <option>Web Development</option>
-                      <option>Data Science</option>
-                      <option>Design</option>
-                      <option>Class 5</option>
-                      <option>Class 6</option>
-                      <option>Class 7</option>
-                      <option>Class 8</option>
-                      <option>Class 9</option>
-                      <option>Class 10</option>
-                      <option>Class 11</option>
-                      <option>Class 12</option>
+                      <option>Skill Development</option>
+                      <option>Academic</option>
                       <option>Admission</option>
+                      <option>Jobs</option>
                     </select>
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                       <ChevronRight size={18} className="rotate-90" />
