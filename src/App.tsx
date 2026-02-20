@@ -307,6 +307,15 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
   const activeModule = course.modules.find(m => m.id === activeModuleId) || course.modules[0];
   const activeIndex = course.modules.findIndex(m => m.id === activeModuleId);
 
+  const handleNextLesson = () => {
+    if (activeIndex < course.modules.length - 1) {
+      setActiveModuleId(course.modules[activeIndex + 1].id);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('#');
+    }
+  };
+
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-white">
       {/* Mobile Sidebar Toggle */}
@@ -434,8 +443,8 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
                 {course.instructor}
               </span>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-bold text-slate-900 mb-6 tracking-tight leading-[1.1]">{activeModule.contentTitle}</h1>
-            <p className="text-lg sm:text-xl text-slate-500 leading-relaxed max-w-3xl font-medium mb-8">
+            <h1 className="text-2xl sm:text-4xl font-black text-slate-900 mb-4 tracking-tight leading-tight">{activeModule.contentTitle}</h1>
+            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl font-medium mb-8">
               {activeModule.contentDescription}
             </p>
           </div>
@@ -462,11 +471,23 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-12 border-t border-slate-100">
             <button 
               onClick={() => window.open(course.routineUrl, '_blank')}
-              className="group flex items-center gap-3 px-8 py-4 rounded-2xl bg-slate-900 text-white font-bold hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200 hover:shadow-indigo-200 active:scale-95"
+              className="group flex items-center gap-3 px-8 py-4 rounded-2xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-all active:scale-95"
             >
               <Calendar size={18} className="group-hover:rotate-12 transition-transform" />
               View Full Routine
               <ExternalLink size={14} className="opacity-40" />
+            </button>
+
+            <button 
+              onClick={handleNextLesson}
+              className="group flex items-center gap-3 px-10 py-4 rounded-2xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 hover:shadow-indigo-200 active:scale-95"
+            >
+              <span>{activeIndex < course.modules.length - 1 ? 'Next Lesson' : 'Finish Course'}</span>
+              {activeIndex < course.modules.length - 1 ? (
+                <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              ) : (
+                <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+              )}
             </button>
           </div>
         </div>
@@ -640,45 +661,62 @@ const SortableModuleCard = ({ module, index, onEdit, onDelete }: {
     transform: CSS.Transform.toString(transform),
     transition,
     zIndex: isDragging ? 50 : 'auto',
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.6 : 1,
   };
 
   return (
     <div 
       ref={setNodeRef}
       style={style}
-      className="group relative rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 cursor-pointer"
+      className={`group relative rounded-3xl border border-slate-100 bg-white p-6 transition-all duration-300 cursor-pointer ${
+        isDragging ? 'shadow-2xl border-indigo-200 ring-4 ring-indigo-500/5' : 'shadow-sm hover:shadow-xl hover:border-indigo-100'
+      }`}
       onClick={onEdit}
     >
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
+      <div className="flex items-start justify-between mb-5">
+        <div className="flex items-center gap-4">
           <div 
             {...attributes} 
             {...listeners}
-            className="p-2 -ml-2 text-slate-300 hover:text-slate-600 cursor-grab active:cursor-grabbing transition-colors"
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 cursor-grab active:cursor-grabbing transition-all"
             onClick={(e) => e.stopPropagation()}
           >
             <GripVertical size={20} />
           </div>
-          <div className="h-12 w-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300 relative">
-            <PlayCircle size={24} />
-            <div className="absolute -top-2 -left-2 h-6 w-6 rounded-full bg-slate-900 text-white text-[10px] font-black flex items-center justify-center border-2 border-white">
+          <div className="relative">
+            <div className="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-inner">
+              <PlayCircle size={24} />
+            </div>
+            <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-slate-900 text-white text-[10px] font-black flex items-center justify-center border-2 border-white shadow-sm">
               {index + 1}
             </div>
           </div>
         </div>
         <button 
           onClick={onDelete}
-          className="p-2 text-slate-300 hover:text-red-500 transition-colors"
+          className="h-10 w-10 flex items-center justify-center rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all"
         >
           <Trash2 size={18} />
         </button>
       </div>
-      <h4 className="text-lg font-bold text-slate-900 mb-2 line-clamp-1">{module.contentTitle || 'Untitled Lesson'}</h4>
-      <p className="text-sm text-slate-400 line-clamp-2 font-medium">{module.contentDescription || 'No description provided.'}</p>
-      <div className="mt-6 flex items-center gap-2 text-xs font-black text-indigo-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-        <Edit size={14} />
-        Edit Module
+      <div className="space-y-2">
+        <h4 className="text-lg font-black text-slate-900 line-clamp-1 group-hover:text-indigo-600 transition-colors">
+          {module.contentTitle || 'Untitled Lesson'}
+        </h4>
+        <p className="text-sm text-slate-500 line-clamp-2 font-medium leading-relaxed">
+          {module.contentDescription || 'No description provided for this module.'}
+        </p>
+      </div>
+      <div className="mt-6 pt-5 border-t border-slate-50 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-[10px] font-black text-indigo-600 uppercase tracking-widest">
+          <Edit size={14} />
+          <span>Edit Details</span>
+        </div>
+        {module.videoUrl && (
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+            <PlayCircle size={14} />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -856,287 +894,345 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
       </div>
 
       {editingCourse && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-md">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xl">
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-[3rem] bg-white p-8 sm:p-12 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.2)] custom-scrollbar"
+            initial={{ opacity: 0, y: 40, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            className="w-full max-w-6xl max-h-[92vh] overflow-hidden rounded-[3rem] bg-white shadow-[0_50px_120px_-20px_rgba(0,0,0,0.3)] flex flex-col"
           >
-            <div className="mb-10 flex items-center justify-between sticky top-0 bg-white z-10 pb-6 border-b border-slate-50">
-              <div>
-                <h2 className="text-3xl font-black text-slate-900 tracking-tight">{isAdding ? 'Create New Course' : 'Refine Course'}</h2>
-                <p className="text-sm text-slate-400 font-medium mt-1">Configure your learning experience</p>
+            {/* Modal Header */}
+            <div className="px-8 py-8 sm:px-12 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
+              <div className="flex items-center gap-5">
+                <div className="h-14 w-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                  {isAdding ? <Plus size={28} /> : <Edit size={28} />}
+                </div>
+                <div>
+                  <h2 className="text-3xl font-black text-slate-900 tracking-tight leading-none">
+                    {isAdding ? 'Create New Course' : 'Refine Course'}
+                  </h2>
+                  <p className="text-sm text-slate-400 font-bold mt-2 uppercase tracking-widest">
+                    {isAdding ? 'New Curriculum Setup' : `Editing: ${editingCourse.title || 'Draft Course'}`}
+                  </p>
+                </div>
               </div>
-              <button onClick={() => setEditingCourse(null)} className="p-3 hover:bg-slate-50 rounded-2xl transition-colors text-slate-400">
+              <button 
+                onClick={() => setEditingCourse(null)} 
+                className="h-12 w-12 flex items-center justify-center hover:bg-slate-50 rounded-2xl transition-all text-slate-400 hover:text-slate-900 active:scale-90"
+              >
                 <X size={28} />
               </button>
             </div>
 
-            <div className="grid gap-8 md:grid-cols-2 mb-12">
-              <div className="space-y-6">
-                <div className="group">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Course ID (Unique)</label>
-                  <input 
-                    type="text" 
-                    disabled={!isAdding}
-                    value={editingCourse.id}
-                    onChange={e => setEditingCourse({...editingCourse, id: e.target.value})}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all disabled:opacity-50 font-medium"
-                    placeholder="e.g. react-mastery"
-                  />
-                </div>
-                <div className="group">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Course Title</label>
-                  <input 
-                    type="text" 
-                    value={editingCourse.title}
-                    onChange={e => setEditingCourse({...editingCourse, title: e.target.value})}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-medium"
-                    placeholder="Enter a compelling title"
-                  />
-                </div>
-                <div className="group">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Instructor Name</label>
-                  <input 
-                    type="text" 
-                    value={editingCourse.instructor}
-                    onChange={e => setEditingCourse({...editingCourse, instructor: e.target.value})}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-medium"
-                    placeholder="Who is teaching?"
-                  />
-                </div>
-              </div>
-              <div className="space-y-6">
-                <div className="group">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Learning Category</label>
-                  <div className="relative">
-                    <select 
-                      value={editingCourse.category}
-                      onChange={e => setEditingCourse({...editingCourse, category: e.target.value})}
-                      className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all appearance-none font-medium"
-                    >
-                      <option>Skill Development</option>
-                      <option>Academic</option>
-                      <option>Admission</option>
-                      <option>Jobs</option>
-                    </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                      <ChevronRight size={18} className="rotate-90" />
+            {/* Modal Content - Scrollable Area */}
+            <div className="flex-grow overflow-y-auto custom-scrollbar p-8 sm:p-12">
+              <div className="grid gap-12 lg:grid-cols-[1fr_1.5fr]">
+                {/* Left Column: Course Details */}
+                <div className="space-y-10">
+                  <section>
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="h-2 w-2 rounded-full bg-indigo-600" />
+                      <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em]">Basic Information</h3>
                     </div>
-                  </div>
-                </div>
-                <div className="group">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Course Overview</label>
-                  <textarea 
-                    rows={3}
-                    value={editingCourse.description}
-                    onChange={e => setEditingCourse({...editingCourse, description: e.target.value})}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all resize-none font-medium"
-                    placeholder="What will students learn?"
-                  />
-                </div>
-                <div className="group">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Routine URL</label>
-                  <input 
-                    type="text" 
-                    value={editingCourse.routineUrl}
-                    onChange={e => setEditingCourse({...editingCourse, routineUrl: e.target.value})}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-medium"
-                    placeholder="Link to course schedule"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-16">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h3 className="text-2xl font-black text-slate-900 tracking-tight">Course Modules</h3>
-                  <p className="text-sm text-slate-400 font-medium mt-1">Structure your lessons</p>
-                </div>
-                {editingModuleIndex === null && (
-                  <button 
-                    onClick={() => {
-                      const newModule = { id: Math.random().toString(36).substr(2, 9), title: '', description: '', videoUrl: '', pdfUrl: '', practiceSheetUrl: '', contentTitle: '', contentDescription: '' };
-                      const newModules = [...editingCourse.modules, newModule];
-                      setEditingCourse({ ...editingCourse, modules: newModules });
-                      setEditingModuleIndex(newModules.length - 1);
-                    }}
-                    className="flex items-center gap-2 text-sm font-black text-indigo-600 bg-indigo-50 px-6 py-3 rounded-2xl hover:bg-indigo-100 transition-all active:scale-95"
-                  >
-                    <Plus size={18} />
-                    Add New Lesson
-                  </button>
-                )}
-              </div>
-
-              {editingModuleIndex === null ? (
-                <DndContext 
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext 
-                    items={editingCourse.modules.map(m => m.id)}
-                    strategy={rectSortingStrategy}
-                  >
-                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                      {editingCourse.modules.map((m, i) => (
-                        <SortableModuleCard 
-                          key={m.id}
-                          module={m}
-                          index={i}
-                          onEdit={() => setEditingModuleIndex(i)}
-                          onDelete={(e) => {
-                            e.stopPropagation();
-                            const newModules = editingCourse.modules.filter((_, idx) => idx !== i);
-                            setEditingCourse({...editingCourse, modules: newModules});
-                          }}
-                        />
-                      ))}
-                      {editingCourse.modules.length === 0 && (
-                        <div className="sm:col-span-2 lg:col-span-3 py-12 text-center border-2 border-dashed border-slate-100 rounded-[2.5rem]">
-                          <div className="h-16 w-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-200">
-                            <BookOpen size={32} />
-                          </div>
-                          <p className="text-slate-400 font-bold">No modules added yet</p>
-                          <button 
-                            onClick={() => {
-                              const newModule = { id: Math.random().toString(36).substr(2, 9), title: '', description: '', videoUrl: '', pdfUrl: '', practiceSheetUrl: '', contentTitle: '', contentDescription: '' };
-                              const newModules = [...editingCourse.modules, newModule];
-                              setEditingCourse({ ...editingCourse, modules: newModules });
-                              setEditingModuleIndex(newModules.length - 1);
-                            }}
-                            className="mt-4 text-sm font-black text-indigo-600 hover:underline"
-                          >
-                            Create your first lesson
-                          </button>
+                    <div className="space-y-6">
+                      <div className="group">
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Course ID (Unique)</label>
+                        <div className="relative">
+                          <input 
+                            type="text" 
+                            disabled={!isAdding}
+                            value={editingCourse.id}
+                            onChange={e => setEditingCourse({...editingCourse, id: e.target.value})}
+                            className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 pl-12 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all disabled:opacity-50 font-bold text-slate-900"
+                            placeholder="e.g. react-mastery"
+                          />
+                          <Layout className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
                         </div>
-                      )}
+                      </div>
+                      <div className="group">
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Course Title</label>
+                        <input 
+                          type="text" 
+                          value={editingCourse.title}
+                          onChange={e => setEditingCourse({...editingCourse, title: e.target.value})}
+                          className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-slate-900"
+                          placeholder="Enter a compelling title"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="group">
+                          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Instructor</label>
+                          <input 
+                            type="text" 
+                            value={editingCourse.instructor}
+                            onChange={e => setEditingCourse({...editingCourse, instructor: e.target.value})}
+                            className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-slate-900"
+                            placeholder="Instructor name"
+                          />
+                        </div>
+                        <div className="group">
+                          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Category</label>
+                          <div className="relative">
+                            <select 
+                              value={editingCourse.category}
+                              onChange={e => setEditingCourse({...editingCourse, category: e.target.value})}
+                              className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all appearance-none font-bold text-slate-900"
+                            >
+                              <option>Skill Development</option>
+                              <option>Academic</option>
+                              <option>Admission</option>
+                              <option>Jobs</option>
+                            </select>
+                            <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 rotate-90" size={18} />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </SortableContext>
-                </DndContext>
-              ) : (
-                <div className="relative rounded-[2.5rem] border border-slate-100 bg-slate-50/30 p-8 sm:p-10">
-                  <div className="flex items-center justify-between mb-10">
-                    <button 
-                      onClick={() => setEditingModuleIndex(null)}
-                      className="flex items-center gap-2 text-xs font-black text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest"
-                    >
-                      <ArrowLeft size={16} />
-                      Back to Modules
-                    </button>
-                    <div className="flex items-center gap-4">
-                      <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase tracking-widest">
-                        Editing Module {editingModuleIndex + 1}
-                      </span>
+                  </section>
+
+                  <section>
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="h-2 w-2 rounded-full bg-indigo-600" />
+                      <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em]">Resources & Details</h3>
+                    </div>
+                    <div className="space-y-6">
+                      <div className="group">
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Course Overview</label>
+                        <textarea 
+                          rows={4}
+                          value={editingCourse.description}
+                          onChange={e => setEditingCourse({...editingCourse, description: e.target.value})}
+                          className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all resize-none font-bold text-slate-900"
+                          placeholder="What will students learn?"
+                        />
+                      </div>
+                      <div className="group">
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Routine URL</label>
+                        <div className="relative">
+                          <input 
+                            type="text" 
+                            value={editingCourse.routineUrl}
+                            onChange={e => setEditingCourse({...editingCourse, routineUrl: e.target.value})}
+                            className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 pl-12 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-slate-900"
+                            placeholder="Link to schedule"
+                          />
+                          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+
+                {/* Right Column: Module Management */}
+                <div className="bg-slate-50/50 rounded-[2.5rem] p-8 sm:p-10 border border-slate-100 flex flex-col min-h-[500px]">
+                  <div className="flex items-center justify-between mb-8 shrink-0">
+                    <div>
+                      <h3 className="text-2xl font-black text-slate-900 tracking-tight">Curriculum Builder</h3>
+                      <p className="text-sm text-slate-400 font-bold mt-1 uppercase tracking-widest">
+                        {editingCourse.modules.length} Lessons Configured
+                      </p>
+                    </div>
+                    {editingModuleIndex === null && (
                       <button 
                         onClick={() => {
-                          const newModules = editingCourse.modules.filter((_, idx) => idx !== editingModuleIndex);
-                          setEditingCourse({...editingCourse, modules: newModules});
-                          setEditingModuleIndex(null);
+                          const newModule = { id: Math.random().toString(36).substr(2, 9), title: '', description: '', videoUrl: '', pdfUrl: '', practiceSheetUrl: '', contentTitle: '', contentDescription: '' };
+                          const newModules = [...editingCourse.modules, newModule];
+                          setEditingCourse({ ...editingCourse, modules: newModules });
+                          setEditingModuleIndex(newModules.length - 1);
                         }}
-                        className="text-red-400 hover:text-red-600 transition-colors"
-                        title="Delete Module"
+                        className="flex items-center gap-2 text-xs font-black text-white bg-indigo-600 px-6 py-3.5 rounded-2xl hover:bg-indigo-700 transition-all active:scale-95 shadow-lg shadow-indigo-100"
                       >
-                        <Trash2 size={20} />
+                        <Plus size={18} />
+                        Add Lesson
                       </button>
-                    </div>
+                    )}
                   </div>
 
-                  <div className="grid gap-8 sm:grid-cols-2">
-                    <div className="sm:col-span-2 group">
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Content Title</label>
-                      <input 
-                        placeholder="Internal content title"
-                        value={editingCourse.modules[editingModuleIndex].contentTitle}
-                        onChange={e => {
-                          const newModules = [...editingCourse.modules];
-                          newModules[editingModuleIndex].contentTitle = e.target.value;
-                          setEditingCourse({...editingCourse, modules: newModules});
-                        }}
-                        className="w-full rounded-2xl border border-slate-100 p-4 text-sm font-bold outline-none focus:border-indigo-500/30 bg-white shadow-sm"
-                      />
-                    </div>
-                    <div className="sm:col-span-2 group">
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Content Description</label>
-                      <textarea 
-                        rows={4}
-                        placeholder="Detailed content description"
-                        value={editingCourse.modules[editingModuleIndex].contentDescription}
-                        onChange={e => {
-                          const newModules = [...editingCourse.modules];
-                          newModules[editingModuleIndex].contentDescription = e.target.value;
-                          setEditingCourse({...editingCourse, modules: newModules});
-                        }}
-                        className="w-full rounded-2xl border border-slate-100 p-4 text-sm font-bold outline-none focus:border-indigo-500/30 bg-white shadow-sm resize-none"
-                      />
-                    </div>
-                    <div className="group">
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Video Embed URL</label>
-                      <input 
-                        placeholder="https://www.youtube.com/embed/..."
-                        value={editingCourse.modules[editingModuleIndex].videoUrl}
-                        onChange={e => {
-                          const newModules = [...editingCourse.modules];
-                          newModules[editingModuleIndex].videoUrl = e.target.value;
-                          setEditingCourse({...editingCourse, modules: newModules});
-                        }}
-                        className="w-full rounded-2xl border border-slate-100 p-4 text-sm font-bold outline-none focus:border-indigo-500/30 bg-white shadow-sm"
-                      />
-                    </div>
-                    <div className="group">
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Lecture PDF</label>
-                      <input 
-                        placeholder="Link to class notes"
-                        value={editingCourse.modules[editingModuleIndex].pdfUrl}
-                        onChange={e => {
-                          const newModules = [...editingCourse.modules];
-                          newModules[editingModuleIndex].pdfUrl = e.target.value;
-                          setEditingCourse({...editingCourse, modules: newModules});
-                        }}
-                        className="w-full rounded-2xl border border-slate-100 p-4 text-sm font-bold outline-none focus:border-indigo-500/30 bg-white shadow-sm"
-                      />
-                    </div>
-                    <div className="group">
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Practice Sheet URL</label>
-                      <input 
-                        placeholder="Link to exercises"
-                        value={editingCourse.modules[editingModuleIndex].practiceSheetUrl}
-                        onChange={e => {
-                          const newModules = [...editingCourse.modules];
-                          newModules[editingModuleIndex].practiceSheetUrl = e.target.value;
-                          setEditingCourse({...editingCourse, modules: newModules});
-                        }}
-                        className="w-full rounded-2xl border border-slate-100 p-4 text-sm font-bold outline-none focus:border-indigo-500/30 bg-white shadow-sm"
-                      />
-                    </div>
-                  </div>
-                  <div className="mt-12 flex justify-end">
-                    <button 
-                      onClick={() => setEditingModuleIndex(null)}
-                      className="rounded-2xl bg-indigo-600 px-10 py-4 font-black text-white shadow-lg hover:bg-indigo-700 transition-all active:scale-95"
-                    >
-                      Done Editing Module
-                    </button>
+                  <div className="flex-grow">
+                    {editingModuleIndex === null ? (
+                      <DndContext 
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                      >
+                        <SortableContext 
+                          items={editingCourse.modules.map(m => m.id)}
+                          strategy={verticalListSortingStrategy}
+                        >
+                          <div className="grid gap-4">
+                            {editingCourse.modules.map((m, i) => (
+                              <SortableModuleCard 
+                                key={m.id}
+                                module={m}
+                                index={i}
+                                onEdit={() => setEditingModuleIndex(i)}
+                                onDelete={(e) => {
+                                  e.stopPropagation();
+                                  const newModules = editingCourse.modules.filter((_, idx) => idx !== i);
+                                  setEditingCourse({...editingCourse, modules: newModules});
+                                }}
+                              />
+                            ))}
+                            {editingCourse.modules.length === 0 && (
+                              <div className="py-20 text-center bg-white rounded-3xl border-2 border-dashed border-slate-100">
+                                <div className="h-16 w-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-200">
+                                  <BookOpen size={32} />
+                                </div>
+                                <p className="text-slate-400 font-bold">Your curriculum is empty</p>
+                                <button 
+                                  onClick={() => {
+                                    const newModule = { id: Math.random().toString(36).substr(2, 9), title: '', description: '', videoUrl: '', pdfUrl: '', practiceSheetUrl: '', contentTitle: '', contentDescription: '' };
+                                    const newModules = [...editingCourse.modules, newModule];
+                                    setEditingCourse({ ...editingCourse, modules: newModules });
+                                    setEditingModuleIndex(newModules.length - 1);
+                                  }}
+                                  className="mt-4 text-sm font-black text-indigo-600 hover:underline"
+                                >
+                                  Start building now
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </SortableContext>
+                      </DndContext>
+                    ) : (
+                      <motion.div 
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm"
+                      >
+                        <div className="flex items-center justify-between mb-10">
+                          <button 
+                            onClick={() => setEditingModuleIndex(null)}
+                            className="flex items-center gap-2 text-[10px] font-black text-slate-400 hover:text-indigo-600 transition-all uppercase tracking-[0.2em]"
+                          >
+                            <ArrowLeft size={16} />
+                            Back to List
+                          </button>
+                          <div className="flex items-center gap-4">
+                            <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg uppercase tracking-widest">
+                              Lesson {editingModuleIndex + 1}
+                            </span>
+                            <button 
+                              onClick={() => {
+                                const newModules = editingCourse.modules.filter((_, idx) => idx !== editingModuleIndex);
+                                setEditingCourse({...editingCourse, modules: newModules});
+                                setEditingModuleIndex(null);
+                              }}
+                              className="h-9 w-9 flex items-center justify-center rounded-xl text-red-400 hover:text-red-600 hover:bg-red-50 transition-all"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="space-y-8">
+                          <div className="group">
+                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Lesson Title</label>
+                            <input 
+                              placeholder="e.g. Introduction to React Hooks"
+                              value={editingCourse.modules[editingModuleIndex].contentTitle}
+                              onChange={e => {
+                                const newModules = [...editingCourse.modules];
+                                newModules[editingModuleIndex].contentTitle = e.target.value;
+                                setEditingCourse({...editingCourse, modules: newModules});
+                              }}
+                              className="w-full rounded-2xl border border-slate-100 p-4 text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
+                            />
+                          </div>
+                          <div className="group">
+                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Lesson Description</label>
+                            <textarea 
+                              rows={3}
+                              placeholder="Briefly describe what this lesson covers..."
+                              value={editingCourse.modules[editingModuleIndex].contentDescription}
+                              onChange={e => {
+                                const newModules = [...editingCourse.modules];
+                                newModules[editingModuleIndex].contentDescription = e.target.value;
+                                setEditingCourse({...editingCourse, modules: newModules});
+                              }}
+                              className="w-full rounded-2xl border border-slate-100 p-4 text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all resize-none"
+                            />
+                          </div>
+                          <div className="grid gap-6 sm:grid-cols-2">
+                            <div className="group">
+                              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Video URL (Embed)</label>
+                              <div className="relative">
+                                <input 
+                                  placeholder="https://youtube.com/embed/..."
+                                  value={editingCourse.modules[editingModuleIndex].videoUrl}
+                                  onChange={e => {
+                                    const newModules = [...editingCourse.modules];
+                                    newModules[editingModuleIndex].videoUrl = e.target.value;
+                                    setEditingCourse({...editingCourse, modules: newModules});
+                                  }}
+                                  className="w-full rounded-2xl border border-slate-100 p-4 pl-12 text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
+                                />
+                                <PlayCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                              </div>
+                            </div>
+                            <div className="group">
+                              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Lecture PDF</label>
+                              <div className="relative">
+                                <input 
+                                  placeholder="Link to notes"
+                                  value={editingCourse.modules[editingModuleIndex].pdfUrl}
+                                  onChange={e => {
+                                    const newModules = [...editingCourse.modules];
+                                    newModules[editingModuleIndex].pdfUrl = e.target.value;
+                                    setEditingCourse({...editingCourse, modules: newModules});
+                                  }}
+                                  className="w-full rounded-2xl border border-slate-100 p-4 pl-12 text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
+                                />
+                                <FileText className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                              </div>
+                            </div>
+                            <div className="sm:col-span-2 group">
+                              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Practice Sheet</label>
+                              <div className="relative">
+                                <input 
+                                  placeholder="Link to exercises"
+                                  value={editingCourse.modules[editingModuleIndex].practiceSheetUrl}
+                                  onChange={e => {
+                                    const newModules = [...editingCourse.modules];
+                                    newModules[editingModuleIndex].practiceSheetUrl = e.target.value;
+                                    setEditingCourse({...editingCourse, modules: newModules});
+                                  }}
+                                  className="w-full rounded-2xl border border-slate-100 p-4 pl-12 text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
+                                />
+                                <Layout className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="pt-4">
+                            <button 
+                              onClick={() => setEditingModuleIndex(null)}
+                              className="w-full rounded-2xl bg-slate-900 px-10 py-4 font-black text-white shadow-xl hover:bg-indigo-600 transition-all active:scale-95"
+                            >
+                              Save Lesson Details
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
                   </div>
                 </div>
-              )}
+              </div>
             </div>
 
-            <div className="mt-16 flex flex-col sm:flex-row justify-end gap-4 sticky bottom-0 bg-white/80 backdrop-blur-xl pt-8 border-t border-slate-50">
+            {/* Modal Footer */}
+            <div className="px-8 py-8 sm:px-12 bg-slate-50/80 backdrop-blur-md border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-4 shrink-0">
               <button 
                 onClick={() => setEditingCourse(null)}
-                className="order-2 sm:order-1 rounded-2xl px-10 py-5 font-black text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all uppercase tracking-widest text-xs"
+                className="order-2 sm:order-1 rounded-2xl px-10 py-4 font-black text-slate-400 hover:text-slate-900 transition-all uppercase tracking-[0.2em] text-[10px]"
               >
                 Discard Changes
               </button>
               <button 
                 onClick={() => handleSave(editingCourse)}
-                className="order-1 sm:order-2 flex items-center justify-center gap-3 rounded-[1.5rem] bg-indigo-600 px-12 py-5 font-black text-white shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] transition-all hover:bg-indigo-700 active:scale-95"
+                className="order-1 sm:order-2 flex items-center justify-center gap-3 rounded-2xl bg-indigo-600 px-12 py-4 font-black text-white shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] transition-all hover:bg-indigo-700 active:scale-95"
               >
                 <Save size={20} />
-                Finalize & Save
+                {isAdding ? 'Publish Course' : 'Save Changes'}
               </button>
             </div>
           </motion.div>
