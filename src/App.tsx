@@ -957,7 +957,7 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                 {editingModuleIndex === null && (
                   <button 
                     onClick={() => {
-                      const newModule = { id: Math.random().toString(36).substr(2, 9), videoUrl: '', pdfUrl: '', practiceSheetUrl: '', contentTitle: '', contentDescription: '' };
+                      const newModule = { id: Math.random().toString(36).substr(2, 9), title: '', description: '', videoUrl: '', pdfUrl: '', practiceSheetUrl: '', contentTitle: '', contentDescription: '' };
                       const newModules = [...editingCourse.modules, newModule];
                       setEditingCourse({ ...editingCourse, modules: newModules });
                       setEditingModuleIndex(newModules.length - 1);
@@ -1002,7 +1002,7 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                           <p className="text-slate-400 font-bold">No modules added yet</p>
                           <button 
                             onClick={() => {
-                              const newModule = { id: Math.random().toString(36).substr(2, 9), videoUrl: '', pdfUrl: '', practiceSheetUrl: '', contentTitle: '', contentDescription: '' };
+                              const newModule = { id: Math.random().toString(36).substr(2, 9), title: '', description: '', videoUrl: '', pdfUrl: '', practiceSheetUrl: '', contentTitle: '', contentDescription: '' };
                               const newModules = [...editingCourse.modules, newModule];
                               setEditingCourse({ ...editingCourse, modules: newModules });
                               setEditingModuleIndex(newModules.length - 1);
