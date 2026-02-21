@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useParams, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -35,7 +35,13 @@ import {
   Settings,
   Briefcase,
   GraduationCap,
-  GripVertical
+  GripVertical,
+  Pause,
+  Volume2,
+  VolumeX,
+  Maximize,
+  RotateCcw,
+  Check
 } from 'lucide-react';
 import { 
   DndContext, 
@@ -268,6 +274,387 @@ const HomePage = ({ courses }: { courses: Course[] }) => {
   );
 };
 
+const YouTubePlayer = ({ videoUrl, title }: { videoUrl: string, title: string }) => {
+  const playerRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(100);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const [showControls, setShowControls] = useState(true);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [quality, setQuality] = useState('auto');
+  const [availableQualities, setAvailableQualities] = useState<string[]>([]);
+  const [isLocked, setIsLocked] = useState(true);
+  const controlsTimeoutRef = useRef<any>(null);
+
+  const playbackRates = [0.5, 0.75, 1, 1.25, 1.5, 2];
+
+  // Extract video ID from URL
+  const getVideoId = (url: string) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  const videoId = getVideoId(videoUrl);
+
+  useEffect(() => {
+    // Reset lock when video changes
+    setIsLocked(true);
+    setIsReady(false);
+  }, [videoId]);
+
+  useEffect(() => {
+    // Load YouTube API if not already loaded
+    if (!(window as any).YT) {
+      const tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+    }
+
+    let player: any;
+
+    const onPlayerReady = (event: any) => {
+      setIsReady(true);
+      setDuration(event.target.getDuration());
+      if (event.target.getAvailableQualityLevels) {
+        setAvailableQualities(event.target.getAvailableQualityLevels());
+      }
+    };
+
+    const onPlayerStateChange = (event: any) => {
+      setIsPlaying(event.data === 1);
+    };
+
+    const initPlayer = () => {
+      if ((window as any).YT && (window as any).YT.Player && videoId) {
+        player = new (window as any).YT.Player(`youtube-player-${videoId}`, {
+          height: '100%',
+          width: '100%',
+          videoId: videoId,
+          playerVars: {
+            controls: 0,
+            disablekb: 1,
+            modestbranding: 1,
+            rel: 0,
+            showinfo: 0,
+            iv_load_policy: 3,
+            fs: 0,
+            origin: window.location.origin
+          },
+          events: {
+            onReady: onPlayerReady,
+            onStateChange: onPlayerStateChange
+          }
+        });
+        playerRef.current = player;
+      }
+    };
+
+    if ((window as any).YT && (window as any).YT.Player) {
+      initPlayer();
+    } else {
+      (window as any).onYouTubeIframeAPIReady = initPlayer;
+    }
+
+    const interval = setInterval(() => {
+      if (playerRef.current && playerRef.current.getCurrentTime) {
+        setCurrentTime(playerRef.current.getCurrentTime());
+      }
+    }, 500);
+
+    // Keyboard Shortcuts
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isLocked) return;
+      if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+      if (e.code === 'KeyM') { e.preventDefault(); toggleMute(); }
+      if (e.code === 'KeyF') { e.preventDefault(); toggleFullscreen(); }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('keydown', handleKeyDown);
+      if (playerRef.current) {
+        playerRef.current.destroy();
+      }
+    };
+  }, [videoId, isLocked]);
+
+  const togglePlay = () => {
+    if (!playerRef.current) return;
+    if (isPlaying) playerRef.current.pauseVideo();
+    else playerRef.current.playVideo();
+  };
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!playerRef.current) return;
+    const time = parseFloat(e.target.value);
+    playerRef.current.seekTo(time, true);
+    setCurrentTime(time);
+  };
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!playerRef.current) return;
+    const val = parseInt(e.target.value);
+    setVolume(val);
+    playerRef.current.setVolume(val);
+    if (val > 0) setIsMuted(false);
+  };
+
+  const toggleMute = () => {
+    if (!playerRef.current) return;
+    if (isMuted) {
+      playerRef.current.unMute();
+      setIsMuted(false);
+      playerRef.current.setVolume(volume);
+    } else {
+      playerRef.current.mute();
+      setIsMuted(true);
+    }
+  };
+
+  const changePlaybackRate = (rate: number) => {
+    if (!playerRef.current) return;
+    playerRef.current.setPlaybackRate(rate);
+    setPlaybackRate(rate);
+    setIsSettingsOpen(false);
+  };
+
+  const changeQuality = (q: string) => {
+    if (!playerRef.current) return;
+    if (playerRef.current.setPlaybackQuality) playerRef.current.setPlaybackQuality(q);
+    setQuality(q);
+    setIsSettingsOpen(false);
+  };
+
+  const toggleFullscreen = () => {
+    if (!containerRef.current) return;
+    if (!document.fullscreenElement) containerRef.current.requestFullscreen();
+    else document.exitFullscreen();
+  };
+
+  const formatTime = (seconds: number) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
+    return [h, m, s].map(v => v < 10 ? "0" + v : v).filter((v, i) => v !== "00" || i > 0).join(":");
+  };
+
+  const handleMouseMove = () => {
+    setShowControls(true);
+    if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+    controlsTimeoutRef.current = setTimeout(() => {
+      if (isPlaying && !isSettingsOpen) setShowControls(false);
+    }, 3000);
+  };
+
+  return (
+    <div 
+      ref={containerRef}
+      className="relative aspect-video w-full bg-black group/player overflow-hidden select-none"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => isPlaying && !isSettingsOpen && setShowControls(false)}
+    >
+      <div id={`youtube-player-${videoId}`} className="w-full h-full pointer-events-none scale-[1.01]" />
+
+      {/* Protection Shield */}
+      <AnimatePresence>
+        {isLocked && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onContextMenu={(e) => e.preventDefault()}
+            onClick={() => setIsLocked(false)}
+            className="absolute inset-0 z-[40] bg-slate-950/60 backdrop-blur-xl flex flex-col items-center justify-center cursor-pointer group/shield"
+          >
+            <div className="h-20 w-20 sm:h-28 sm:w-28 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 flex items-center justify-center text-white shadow-2xl group-hover/shield:scale-110 group-hover/shield:bg-indigo-600 transition-all duration-700">
+              <PlayCircle size={48} fill="currentColor" className="sm:w-16 sm:h-16" />
+            </div>
+            <div className="mt-8 text-center px-8">
+              <h3 className="text-white font-black text-xl sm:text-2xl mb-2 tracking-tight">Secure Learning Environment</h3>
+              <p className="text-white/40 font-bold text-[10px] sm:text-xs uppercase tracking-[0.3em]">Click to Initialize Secure Stream</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Right-click Protection Overlay */}
+      {!isLocked && (
+        <div 
+          className="absolute inset-0 z-10" 
+          onContextMenu={(e) => e.preventDefault()}
+          onClick={() => {
+            if (isSettingsOpen) setIsSettingsOpen(false);
+            else togglePlay();
+          }}
+        />
+      )}
+
+      {/* Custom Controls UI */}
+      <AnimatePresence>
+        {!isLocked && (showControls || !isPlaying || isSettingsOpen) && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-20 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/20 to-transparent"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Settings Menu */}
+            <AnimatePresence>
+              {isSettingsOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  className="absolute right-6 bottom-24 w-64 bg-slate-900/95 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden p-2"
+                >
+                  <div className="p-3 border-b border-white/5 mb-2 flex items-center justify-between">
+                    <h4 className="text-white font-bold text-xs uppercase tracking-widest opacity-50">Settings</h4>
+                    <button onClick={() => setIsSettingsOpen(false)} className="text-white/30 hover:text-white"><X size={14} /></button>
+                  </div>
+                  
+                  <div className="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar p-1">
+                    <div>
+                      <p className="px-3 py-1 text-[10px] font-black text-indigo-400 uppercase tracking-widest">Playback Speed</p>
+                      <div className="grid grid-cols-3 gap-1 mt-1">
+                        {playbackRates.map(rate => (
+                          <button 
+                            key={rate}
+                            onClick={() => changePlaybackRate(rate)}
+                            className={`flex items-center justify-center py-2 rounded-lg text-[10px] font-bold transition-all ${
+                              playbackRate === rate ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                            }`}
+                          >
+                            {rate === 1 ? 'Normal' : `${rate}x`}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {availableQualities.length > 0 && (
+                      <div>
+                        <p className="px-3 py-1 text-[10px] font-black text-indigo-400 uppercase tracking-widest">Quality</p>
+                        <div className="space-y-0.5 mt-1">
+                          {availableQualities.map(q => (
+                            <button 
+                              key={q}
+                              onClick={() => changeQuality(q)}
+                              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10px] font-bold transition-all ${
+                                quality === q ? 'bg-indigo-600/20 text-indigo-400' : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                              }`}
+                            >
+                              <span className="uppercase">{q}</span>
+                              {quality === q && <Check size={12} />}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <button 
+                      onClick={() => { setIsLocked(true); setIsSettingsOpen(false); }}
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[10px] font-bold text-red-400 hover:bg-red-500/10 transition-all mt-2 border-t border-white/5 pt-4"
+                    >
+                      <Settings size={12} />
+                      <span>Re-enable Protection</span>
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className="p-4 sm:p-8">
+              <div className="relative group/progress mb-6">
+                <input 
+                  type="range" min="0" max={duration || 100} value={currentTime} onChange={handleSeek}
+                  className="w-full h-1.5 bg-white/20 rounded-full appearance-none cursor-pointer accent-indigo-500 hover:h-2.5 transition-all"
+                />
+                <div 
+                  className="absolute left-0 top-0 h-1.5 bg-indigo-500 rounded-full pointer-events-none group-hover/progress:h-2.5 transition-all shadow-[0_0_15px_rgba(99,102,241,0.5)]"
+                  style={{ width: `${(currentTime / duration) * 100}%` }}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4 sm:gap-8">
+                  <button 
+                    onClick={togglePlay} 
+                    className="h-12 w-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-indigo-600 text-white transition-all active:scale-90 shadow-xl backdrop-blur-md"
+                  >
+                    {isPlaying ? <Pause size={24} fill="currentColor" /> : <PlayCircle size={24} fill="currentColor" />}
+                  </button>
+
+                  <div className="flex items-center gap-3 group/volume">
+                    <button onClick={toggleMute} className="text-white/70 hover:text-white transition-colors">
+                      {isMuted || volume === 0 ? <VolumeX size={22} /> : <Volume2 size={22} />}
+                    </button>
+                    <div className="w-0 group-hover/volume:w-24 transition-all duration-500 overflow-hidden flex items-center">
+                      <input 
+                        type="range" min="0" max="100" value={isMuted ? 0 : volume} onChange={handleVolumeChange}
+                        className="w-24 h-1 bg-white/20 rounded-full appearance-none cursor-pointer accent-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="text-white/90 text-xs sm:text-sm font-bold font-mono tracking-wider">
+                    {formatTime(currentTime)} <span className="mx-1 opacity-30">/</span> {formatTime(duration)}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 sm:gap-6">
+                  <button 
+                    onClick={() => setIsSettingsOpen(!isSettingsOpen)} 
+                    className={`h-10 w-10 flex items-center justify-center rounded-xl transition-all ${
+                      isSettingsOpen ? 'bg-indigo-600 text-white' : 'text-white/70 hover:text-white hover:bg-white/10'
+                    }`}
+                    title="Settings"
+                  >
+                    <Settings size={20} className={isSettingsOpen ? 'rotate-90' : ''} />
+                  </button>
+                  
+                  <button 
+                    onClick={() => playerRef.current?.seekTo(0)} 
+                    className="h-10 w-10 flex items-center justify-center rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all" 
+                    title="Restart"
+                  >
+                    <RotateCcw size={20} />
+                  </button>
+                  
+                  <button 
+                    onClick={toggleFullscreen} 
+                    className="h-10 w-10 flex items-center justify-center rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all"
+                  >
+                    <Maximize size={20} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {!isReady && (
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-950">
+          <div className="relative">
+            <div className="h-16 w-16 border-4 border-indigo-500/10 border-t-indigo-500 rounded-full animate-spin" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <PlayCircle size={24} className="text-indigo-500/20" />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -275,14 +662,11 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [moduleSearch, setModuleSearch] = useState('');
-  const [isVideoLocked, setIsVideoLocked] = useState(true);
 
   useEffect(() => {
     if (course && course.modules.length > 0 && !activeModuleId) {
       setActiveModuleId(course.modules[0].id);
     }
-    // Reset lock when module changes
-    setIsVideoLocked(true);
   }, [course, activeModuleId]);
 
   if (!course) {
@@ -424,44 +808,8 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
           {/* Video Player Container */}
           <div className="relative group mb-6 sm:mb-10">
             <div className="absolute -inset-2 sm:-inset-4 bg-indigo-500/5 rounded-2xl sm:rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-            <div className="relative aspect-video w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-slate-900 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.2)] sm:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] ring-1 ring-white/10">
-              <iframe
-                src={`${activeModule.videoUrl}${activeModule.videoUrl.includes('?') ? '&' : '?'}modestbranding=1&rel=0`}
-                title={activeModule.contentTitle}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-              
-              {/* Protection Shield Overlay */}
-              <AnimatePresence>
-                {isVideoLocked && (
-                  <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    onContextMenu={(e) => e.preventDefault()}
-                    onClick={() => setIsVideoLocked(false)}
-                    className="absolute inset-0 z-10 bg-slate-900/20 backdrop-blur-[2px] flex flex-col items-center justify-center cursor-pointer group/shield"
-                  >
-                    <div className="h-16 w-16 sm:h-24 sm:w-24 rounded-full bg-white/20 backdrop-blur-xl border border-white/30 flex items-center justify-center text-white shadow-2xl group-hover/shield:scale-110 group-hover/shield:bg-indigo-600 transition-all duration-500">
-                      <PlayCircle size={40} fill="currentColor" className="sm:w-14 sm:h-14" />
-                    </div>
-                    <p className="mt-4 text-white font-bold text-xs sm:text-sm uppercase tracking-[0.2em] drop-shadow-lg">Click to Play & Interact</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Re-lock button (visible on hover when unlocked) */}
-              {!isVideoLocked && (
-                <button 
-                  onClick={() => setIsVideoLocked(true)}
-                  className="absolute top-4 right-4 z-20 p-2 rounded-full bg-black/40 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all hover:bg-indigo-600"
-                  title="Enable Protection"
-                >
-                  <Settings size={16} />
-                </button>
-              )}
+            <div className="relative w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-slate-900 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.2)] sm:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] ring-1 ring-white/10">
+              <YouTubePlayer videoUrl={activeModule.videoUrl} title={activeModule.contentTitle} />
             </div>
           </div>
 
