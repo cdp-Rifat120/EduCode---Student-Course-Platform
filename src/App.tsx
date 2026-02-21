@@ -455,6 +455,18 @@ const YouTubePlayer = ({ videoUrl, title }: { videoUrl: string, title: string })
     return [h, m, s].map(v => v < 10 ? "0" + v : v).filter((v, i) => v !== "00" || i > 0).join(":");
   };
 
+  const toggleSettings = () => {
+    if (!isSettingsOpen && playerRef.current) {
+      if (playerRef.current.getAvailableQualityLevels) {
+        setAvailableQualities(playerRef.current.getAvailableQualityLevels());
+      }
+      if (playerRef.current.getPlaybackQuality) {
+        setQuality(playerRef.current.getPlaybackQuality());
+      }
+    }
+    setIsSettingsOpen(!isSettingsOpen);
+  };
+
   const handleMouseMove = () => {
     setShowControls(true);
     if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
@@ -523,22 +535,22 @@ const YouTubePlayer = ({ videoUrl, title }: { videoUrl: string, title: string })
                   initial={{ opacity: 0, scale: 0.95, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                  className="absolute right-6 bottom-24 w-64 bg-slate-900/95 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden p-2"
+                  className="absolute right-2 sm:right-6 bottom-20 sm:bottom-24 w-[calc(100%-1rem)] sm:w-64 max-w-xs bg-slate-900/95 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden p-2"
                 >
                   <div className="p-3 border-b border-white/5 mb-2 flex items-center justify-between">
-                    <h4 className="text-white font-bold text-xs uppercase tracking-widest opacity-50">Settings</h4>
+                    <h4 className="text-white font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50">Settings</h4>
                     <button onClick={() => setIsSettingsOpen(false)} className="text-white/30 hover:text-white"><X size={14} /></button>
                   </div>
                   
-                  <div className="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar p-1">
+                  <div className="space-y-4 max-h-[250px] sm:max-h-[300px] overflow-y-auto custom-scrollbar p-1">
                     <div>
-                      <p className="px-3 py-1 text-[10px] font-black text-indigo-400 uppercase tracking-widest">Playback Speed</p>
+                      <p className="px-3 py-1 text-[9px] sm:text-[10px] font-black text-indigo-400 uppercase tracking-widest">Playback Speed</p>
                       <div className="grid grid-cols-3 gap-1 mt-1">
                         {playbackRates.map(rate => (
                           <button 
                             key={rate}
                             onClick={() => changePlaybackRate(rate)}
-                            className={`flex items-center justify-center py-2 rounded-lg text-[10px] font-bold transition-all ${
+                            className={`flex items-center justify-center py-2 rounded-lg text-[9px] sm:text-[10px] font-bold transition-all ${
                               playbackRate === rate ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white'
                             }`}
                           >
@@ -550,13 +562,13 @@ const YouTubePlayer = ({ videoUrl, title }: { videoUrl: string, title: string })
 
                     {availableQualities.length > 0 && (
                       <div>
-                        <p className="px-3 py-1 text-[10px] font-black text-indigo-400 uppercase tracking-widest">Quality</p>
+                        <p className="px-3 py-1 text-[9px] sm:text-[10px] font-black text-indigo-400 uppercase tracking-widest">Quality</p>
                         <div className="space-y-0.5 mt-1">
                           {availableQualities.map(q => (
                             <button 
                               key={q}
                               onClick={() => changeQuality(q)}
-                              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10px] font-bold transition-all ${
+                              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-[9px] sm:text-[10px] font-bold transition-all ${
                                 quality === q ? 'bg-indigo-600/20 text-indigo-400' : 'text-slate-400 hover:bg-white/5 hover:text-white'
                               }`}
                             >
@@ -570,7 +582,7 @@ const YouTubePlayer = ({ videoUrl, title }: { videoUrl: string, title: string })
 
                     <button 
                       onClick={() => { setIsLocked(true); setIsSettingsOpen(false); }}
-                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[10px] font-bold text-red-400 hover:bg-red-500/10 transition-all mt-2 border-t border-white/5 pt-4"
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[9px] sm:text-[10px] font-bold text-red-400 hover:bg-red-500/10 transition-all mt-2 border-t border-white/5 pt-4"
                     >
                       <Settings size={12} />
                       <span>Re-enable Protection</span>
@@ -580,46 +592,47 @@ const YouTubePlayer = ({ videoUrl, title }: { videoUrl: string, title: string })
               )}
             </AnimatePresence>
 
-            <div className="p-4 sm:p-8">
-              <div className="relative group/progress mb-6">
+            <div className="p-3 sm:p-8">
+              {/* Progress Bar */}
+              <div className="relative group/progress mb-3 sm:mb-6 px-1">
                 <input 
                   type="range" min="0" max={duration || 100} value={currentTime} onChange={handleSeek}
-                  className="w-full h-1.5 bg-white/20 rounded-full appearance-none cursor-pointer accent-indigo-500 hover:h-2.5 transition-all"
+                  className="w-full h-1.5 sm:h-1.5 bg-white/20 rounded-full appearance-none cursor-pointer accent-indigo-500 hover:h-2.5 transition-all"
                 />
                 <div 
-                  className="absolute left-0 top-0 h-1.5 bg-indigo-500 rounded-full pointer-events-none group-hover/progress:h-2.5 transition-all shadow-[0_0_15px_rgba(99,102,241,0.5)]"
-                  style={{ width: `${(currentTime / duration) * 100}%` }}
+                  className="absolute left-1 right-1 top-0 h-1.5 sm:h-1.5 bg-indigo-500 rounded-full pointer-events-none group-hover/progress:h-2.5 transition-all shadow-[0_0_15px_rgba(99,102,241,0.5)]"
+                  style={{ width: `calc(${(currentTime / duration) * 100}% - 0.5rem)` }}
                 />
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4 sm:gap-8">
-                  <div className="flex items-center gap-2 sm:gap-4">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 sm:gap-8 overflow-hidden">
+                  <div className="flex items-center gap-1 sm:gap-4 shrink-0">
                     <button 
                       onClick={() => skip(-10)} 
-                      className="text-white/70 hover:text-white transition-colors p-2"
+                      className="text-white/70 hover:text-white transition-colors p-1.5 sm:p-2"
                       title="Skip back 10s"
                     >
-                      <RotateCcw size={20} />
+                      <RotateCcw size={18} className="sm:w-5 sm:h-5" />
                     </button>
                     
                     <button 
                       onClick={togglePlay} 
-                      className="h-12 w-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-indigo-600 text-white transition-all active:scale-90 shadow-xl backdrop-blur-md"
+                      className="h-9 w-9 sm:h-12 sm:w-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-indigo-600 text-white transition-all active:scale-90 shadow-xl backdrop-blur-md"
                     >
-                      {isPlaying ? <Pause size={24} fill="currentColor" /> : <PlayCircle size={24} fill="currentColor" />}
+                      {isPlaying ? <Pause size={18} className="sm:w-6 sm:h-6" fill="currentColor" /> : <PlayCircle size={18} className="sm:w-6 sm:h-6" fill="currentColor" />}
                     </button>
 
                     <button 
                       onClick={() => skip(10)} 
-                      className="text-white/70 hover:text-white transition-colors p-2"
+                      className="text-white/70 hover:text-white transition-colors p-1.5 sm:p-2"
                       title="Skip forward 10s"
                     >
-                      <RotateCw size={20} />
+                      <RotateCw size={18} className="sm:w-5 sm:h-5" />
                     </button>
                   </div>
 
-                  <div className="flex items-center gap-3 group/volume">
+                  <div className="hidden sm:flex items-center gap-3 group/volume shrink-0">
                     <button onClick={toggleMute} className="text-white/70 hover:text-white transition-colors">
                       {isMuted || volume === 0 ? <VolumeX size={22} /> : <Volume2 size={22} />}
                     </button>
@@ -631,27 +644,27 @@ const YouTubePlayer = ({ videoUrl, title }: { videoUrl: string, title: string })
                     </div>
                   </div>
 
-                  <div className="text-white/90 text-xs sm:text-sm font-bold font-mono tracking-wider">
-                    {formatTime(currentTime)} <span className="mx-1 opacity-30">/</span> {formatTime(duration)}
+                  <div className="text-white/90 text-[10px] sm:text-sm font-bold font-mono tracking-wider whitespace-nowrap">
+                    {formatTime(currentTime)} <span className="mx-0.5 sm:mx-1 opacity-30">/</span> {formatTime(duration)}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 sm:gap-6">
+                <div className="flex items-center gap-1 sm:gap-6 shrink-0">
                   <button 
-                    onClick={() => setIsSettingsOpen(!isSettingsOpen)} 
-                    className={`h-10 w-10 flex items-center justify-center rounded-xl transition-all ${
+                    onClick={toggleSettings} 
+                    className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-lg sm:rounded-xl transition-all ${
                       isSettingsOpen ? 'bg-indigo-600 text-white' : 'text-white/70 hover:text-white hover:bg-white/10'
                     }`}
                     title="Settings"
                   >
-                    <Settings size={20} className={isSettingsOpen ? 'rotate-90' : ''} />
+                    <Settings size={16} className={`sm:w-5 sm:h-5 ${isSettingsOpen ? 'rotate-90' : ''}`} />
                   </button>
                   
                   <button 
                     onClick={toggleFullscreen} 
-                    className="h-10 w-10 flex items-center justify-center rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all"
+                    className="h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-lg sm:rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all"
                   >
-                    <Maximize size={20} />
+                    <Maximize size={16} className="sm:w-5 sm:h-5" />
                   </button>
                 </div>
               </div>
