@@ -42,7 +42,8 @@ import {
   Maximize,
   RotateCcw,
   RotateCw,
-  Check
+  Check,
+  ShieldAlert
 } from 'lucide-react';
 import { 
   DndContext, 
@@ -65,6 +66,82 @@ import { CSS } from '@dnd-kit/utilities';
 import { Course, CourseModule } from './types';
 
 // --- Components ---
+
+const AccessGuard = ({ children }: { children: React.ReactNode }) => {
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [inputKey, setInputKey] = useState('');
+  const [error, setError] = useState(false);
+
+  // Obfuscated key: 31072811
+  const target = [51, 49, 48, 55, 50, 56, 49, 49].map(c => String.fromCharCode(c)).join('');
+
+  const handleVerify = () => {
+    if (inputKey === target) {
+      setIsUnlocked(true);
+      setError(false);
+    } else {
+      setError(true);
+      setInputKey('');
+    }
+  };
+
+  if (isUnlocked) return <>{children}</>;
+
+  return (
+    <div 
+      className="fixed inset-0 z-[100] bg-slate-950 flex items-center justify-center p-4 sm:p-6"
+      onContextMenu={(e) => e.preventDefault()}
+    >
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="w-full max-w-md bg-slate-900/50 backdrop-blur-3xl border border-white/10 p-8 sm:p-10 rounded-[2.5rem] shadow-2xl text-center"
+      >
+        <div className="h-20 w-20 rounded-3xl bg-indigo-600/20 flex items-center justify-center mx-auto mb-8 border border-indigo-500/30">
+          <ShieldAlert size={40} className="text-indigo-500" />
+        </div>
+        
+        <h2 className="text-2xl sm:text-3xl font-black text-white mb-3 tracking-tight">Access Restricted</h2>
+        <p className="text-slate-400 text-sm sm:text-base font-medium mb-8 leading-relaxed">
+          This platform is protected. Please enter your unique access key to continue to the dashboard.
+        </p>
+
+        <div className="space-y-4">
+          <div className="relative group">
+            <input 
+              type="password"
+              placeholder="Enter Access Key"
+              value={inputKey}
+              onChange={(e) => setInputKey(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleVerify()}
+              className={`w-full bg-white/5 border ${error ? 'border-red-500/50' : 'border-white/10'} rounded-2xl py-4 px-6 text-white text-center text-lg font-bold tracking-[0.5em] outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-600 placeholder:tracking-normal`}
+            />
+            {error && (
+              <motion.p 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-red-400 text-[10px] font-bold uppercase tracking-widest mt-2"
+              >
+                Invalid Access Key. Please try again.
+              </motion.p>
+            )}
+          </div>
+
+          <button 
+            onClick={handleVerify}
+            className="w-full bg-indigo-600 hover:bg-indigo-50 text-white font-black py-4 rounded-2xl shadow-xl shadow-indigo-600/20 transition-all active:scale-95 flex items-center justify-center gap-2 group"
+          >
+            Verify Identity <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+          </button>
+        </div>
+
+        <p className="mt-8 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
+          Secure Session • End-to-End Encrypted
+        </p>
+      </motion.div>
+    </div>
+  );
+};
 
 const Navbar = ({ isAdmin, onLogout }: { isAdmin: boolean; onLogout: () => void }) => {
   const navigate = useNavigate();
@@ -1714,7 +1791,7 @@ const AppContent = ({ courses, isAdmin, handleLogout, handleLogin, fetchCourses,
       {!isCoursePage && <Navbar isAdmin={isAdmin} onLogout={handleLogout} />}
       <main>
         <Routes>
-          <Route path="/" element={<HomePage courses={courses} />} />
+          <Route path="/" element={<AccessGuard><HomePage courses={courses} /></AccessGuard>} />
           <Route path="/admin-login" element={<AdminLoginPage onLogin={handleLogin} />} />
           <Route 
             path="/admin-panel" 
