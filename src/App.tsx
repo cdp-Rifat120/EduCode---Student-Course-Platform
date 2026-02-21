@@ -63,42 +63,42 @@ const Navbar = ({ isAdmin, onLogout }: { isAdmin: boolean; onLogout: () => void 
   const navigate = useNavigate();
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/70 backdrop-blur-2xl">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 sm:px-8 lg:px-10">
-        <button onClick={() => navigate('/')} className="flex items-center gap-3 group shrink-0 cursor-pointer">
-          <div className="flex h-11 w-11 items-center justify-center rounded-[1.25rem] bg-indigo-600 text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-[0_10px_20px_rgba(79,70,229,0.3)]">
-            <Code size={22} />
+      <div className="mx-auto flex h-16 sm:h-20 max-w-7xl items-center justify-between px-4 sm:px-8 lg:px-10">
+        <button onClick={() => navigate('/')} className="flex items-center gap-2 sm:gap-3 group shrink-0 cursor-pointer">
+          <div className="flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-xl sm:rounded-[1.25rem] bg-indigo-600 text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-[0_10px_20px_rgba(79,70,229,0.3)]">
+            <Code size={18} className="sm:w-[22px] sm:h-[22px]" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-black tracking-tight text-slate-900 leading-none">EduCode</span>
-            <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-[0.2em] mt-1">Academy</span>
+            <span className="text-lg sm:text-xl font-black tracking-tight text-slate-900 leading-none">EduCode</span>
+            <span className="text-[8px] sm:text-[10px] font-bold text-indigo-600 uppercase tracking-[0.2em] mt-0.5 sm:mt-1">Academy</span>
           </div>
         </button>
         
-        <div className="flex items-center gap-4 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
           {isAdmin ? (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <button 
                 onClick={() => navigate('/admin-panel')}
-                className="flex items-center gap-2 rounded-2xl bg-indigo-50 px-5 py-2.5 text-xs font-bold text-indigo-600 transition-all hover:bg-indigo-100"
+                className="flex items-center gap-2 rounded-xl sm:rounded-2xl bg-indigo-50 px-3 sm:px-5 py-2 sm:py-2.5 text-[10px] sm:text-xs font-bold text-indigo-600 transition-all hover:bg-indigo-100"
               >
-                <Settings size={16} />
-                <span>Dashboard</span>
+                <Settings size={14} className="sm:w-4 sm:h-4" />
+                <span className="hidden xs:inline">Dashboard</span>
               </button>
               <button 
                 onClick={onLogout}
-                className="flex items-center gap-2 rounded-2xl bg-slate-900 px-5 py-2.5 text-xs font-bold text-white transition-all hover:bg-slate-800 shadow-lg shadow-slate-200"
+                className="flex items-center gap-2 rounded-xl sm:rounded-2xl bg-slate-900 px-3 sm:px-5 py-2 sm:py-2.5 text-[10px] sm:text-xs font-bold text-white transition-all hover:bg-slate-800 shadow-lg shadow-slate-200"
               >
-                <LogOut size={16} />
-                <span>Logout</span>
+                <LogOut size={14} className="sm:w-4 sm:h-4" />
+                <span className="hidden xs:inline">Logout</span>
               </button>
             </div>
           ) : (
             <button 
               onClick={() => navigate('/admin-login')}
-              className="group flex items-center gap-2 rounded-2xl bg-slate-900 px-6 py-3 text-sm font-bold text-white transition-all hover:bg-slate-800 hover:shadow-[0_15px_30px_rgba(0,0,0,0.1)] active:scale-95"
+              className="group flex items-center gap-2 rounded-xl sm:rounded-2xl bg-slate-900 px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm font-bold text-white transition-all hover:bg-slate-800 hover:shadow-[0_15px_30px_rgba(0,0,0,0.1)] active:scale-95"
             >
-              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
-                <LogIn size={14} />
+              <div className="flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
+                <LogIn size={12} className="sm:w-[14px] sm:h-[14px]" />
               </div>
               <span>Admin Access</span>
             </button>
@@ -117,9 +117,9 @@ const CourseCard = ({ course }: { course: Course }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -8, transition: { duration: 0.3, ease: "easeOut" } }}
-      className="group relative flex flex-col overflow-hidden rounded-[2rem] border border-slate-200/60 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all hover:shadow-[0_20px_50px_rgba(79,70,229,0.1)]"
+      className="group relative flex flex-col overflow-hidden rounded-3xl sm:rounded-[2rem] border border-slate-200/60 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all hover:shadow-[0_20px_50px_rgba(79,70,229,0.1)]"
     >
-      <div className="relative h-48 overflow-hidden">
+      <div className="relative h-40 sm:h-48 overflow-hidden">
         <img 
           src={`https://picsum.photos/seed/${course.id}/800/600`} 
           alt={course.title}
@@ -127,46 +127,46 @@ const CourseCard = ({ course }: { course: Course }) => {
           referrerPolicy="no-referrer"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="absolute top-4 left-4">
-          <span className="rounded-full bg-white/90 backdrop-blur-md px-3 py-1 text-[10px] font-bold text-indigo-600 uppercase tracking-wider shadow-sm">
+        <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
+          <span className="rounded-full bg-white/90 backdrop-blur-md px-2.5 py-1 text-[9px] sm:text-[10px] font-bold text-indigo-600 uppercase tracking-wider shadow-sm">
             {course.category}
           </span>
         </div>
-        <div className="absolute bottom-4 left-4 right-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-          <div className="flex items-center gap-2 text-white text-xs font-medium">
-            <BookOpen size={14} />
+        <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+          <div className="flex items-center gap-2 text-white text-[10px] sm:text-xs font-medium">
+            <BookOpen size={12} className="sm:w-3.5 sm:h-3.5" />
             <span>{course.modules.length} Lessons</span>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col p-6 pt-5">
-        <div className="mb-3 flex items-center justify-between">
+      <div className="flex flex-col p-5 sm:p-6 pt-4 sm:pt-5">
+        <div className="mb-2 sm:mb-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 ring-4 ring-indigo-50/50">
-              {course.category === 'Skill Development' && <Code size={14} />}
-              {course.category === 'Academic' && <BookOpen size={14} />}
-              {course.category === 'Admission' && <GraduationCap size={14} />}
-              {course.category === 'Jobs' && <Briefcase size={14} />}
-              {!['Skill Development', 'Academic', 'Admission', 'Jobs'].includes(course.category) && <Layout size={14} />}
+            <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 ring-4 ring-indigo-50/50">
+              {course.category === 'Skill Development' && <Code size={12} className="sm:w-3.5 sm:h-3.5" />}
+              {course.category === 'Academic' && <BookOpen size={12} className="sm:w-3.5 sm:h-3.5" />}
+              {course.category === 'Admission' && <GraduationCap size={12} className="sm:w-3.5 sm:h-3.5" />}
+              {course.category === 'Jobs' && <Briefcase size={12} className="sm:w-3.5 sm:h-3.5" />}
+              {!['Skill Development', 'Academic', 'Admission', 'Jobs'].includes(course.category) && <Layout size={12} className="sm:w-3.5 sm:h-3.5" />}
             </div>
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{course.instructor}</span>
+            <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-widest truncate max-w-[120px]">{course.instructor}</span>
           </div>
         </div>
         
-        <h3 className="mb-3 text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
+        <h3 className="mb-2 sm:mb-3 text-lg sm:text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
           {course.title}
         </h3>
-        <p className="mb-6 text-sm leading-relaxed text-slate-500 line-clamp-2">
+        <p className="mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed text-slate-500 line-clamp-2">
           {course.description}
         </p>
         
-        <div className="mt-auto pt-5 border-t border-slate-50">
+        <div className="mt-auto pt-4 sm:pt-5 border-t border-slate-50">
           <button 
             onClick={() => navigate(`/${course.id}`)} 
-            className="w-full flex items-center justify-center gap-2 rounded-xl bg-slate-50 py-3 text-sm font-bold text-slate-900 transition-all hover:bg-indigo-600 hover:text-white active:scale-95 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 rounded-xl bg-slate-50 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-slate-900 transition-all hover:bg-indigo-600 hover:text-white active:scale-95 cursor-pointer"
           >
-            Start Learning <ChevronRight size={16} />
+            Start Learning <ChevronRight size={14} className="sm:w-4 sm:h-4" />
           </button>
         </div>
       </div>
@@ -187,14 +187,14 @@ const HomePage = ({ courses }: { courses: Course[] }) => {
   );
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-12 sm:py-20 sm:px-8 lg:px-10">
-      <header className="mb-20 sm:mb-28 text-center relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px] -z-10" />
+    <div className="mx-auto max-w-7xl px-4 sm:px-8 py-8 sm:py-20 lg:px-10">
+      <header className="mb-12 sm:mb-28 text-center relative">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[600px] aspect-square bg-indigo-500/5 rounded-full blur-[120px] -z-10" />
         
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="inline-flex items-center gap-2 mb-8 rounded-full bg-indigo-50 px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 border border-indigo-100/50"
+          className="inline-flex items-center gap-2 mb-6 sm:mb-8 rounded-full bg-indigo-50 px-4 sm:px-5 py-1.5 sm:py-2 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 border border-indigo-100/50"
         >
           <div className="h-1.5 w-1.5 rounded-full bg-indigo-600 animate-pulse" />
           Learning Platform 2.0
@@ -203,16 +203,16 @@ const HomePage = ({ courses }: { courses: Course[] }) => {
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 font-sans text-5xl font-black tracking-tight text-slate-900 sm:text-7xl lg:text-8xl leading-[0.95]"
+          className="mb-6 sm:mb-8 font-sans text-4xl xs:text-5xl font-black tracking-tight text-slate-900 sm:text-7xl lg:text-8xl leading-[1.1] sm:leading-[0.95]"
         >
           Master the Art of <br className="hidden sm:block" />
-          <span className="relative inline-block mt-2">
+          <span className="relative inline-block mt-1 sm:mt-2">
             <span className="relative z-10 italic text-indigo-600">Coding</span>
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: '100%' }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="absolute bottom-2 left-0 h-4 bg-indigo-100 -z-10 rounded-full" 
+              className="absolute bottom-1 sm:bottom-2 left-0 h-2 sm:h-4 bg-indigo-100 -z-10 rounded-full" 
             />
           </span>
         </motion.h1>
@@ -221,7 +221,7 @@ const HomePage = ({ courses }: { courses: Course[] }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="mx-auto max-w-2xl text-lg sm:text-xl text-slate-500 font-medium leading-relaxed mb-12"
+          className="mx-auto max-w-2xl text-base sm:text-xl text-slate-500 font-medium leading-relaxed mb-8 sm:mb-12"
         >
           Explore our curated selection of high-end programming courses. 
           Learn by doing with real-world code examples and expert guidance.
@@ -231,17 +231,17 @@ const HomePage = ({ courses }: { courses: Course[] }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="relative max-w-2xl mx-auto group"
+          className="relative max-w-2xl mx-auto group px-2 sm:px-0"
         >
-          <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-[2rem] blur opacity-20 group-focus-within:opacity-40 transition duration-500" />
+          <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl sm:rounded-[2rem] blur opacity-20 group-focus-within:opacity-40 transition duration-500" />
           <div className="relative">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={24} />
+            <Search className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={20} />
             <input 
               type="text" 
-              placeholder="Search courses by title or description..." 
+              placeholder="Search courses..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-[2rem] border border-slate-100 bg-white py-6 pl-16 pr-8 text-lg font-medium outline-none focus:border-indigo-500/30 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-xl shadow-slate-200/50 placeholder:text-slate-300"
+              className="w-full rounded-2xl sm:rounded-[2rem] border border-slate-100 bg-white py-4 sm:py-6 pl-12 sm:pl-16 pr-6 sm:pr-8 text-base sm:text-lg font-medium outline-none focus:border-indigo-500/30 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-xl shadow-slate-200/50 placeholder:text-slate-300"
             />
           </div>
         </motion.div>
@@ -275,11 +275,14 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [moduleSearch, setModuleSearch] = useState('');
+  const [isVideoLocked, setIsVideoLocked] = useState(true);
 
   useEffect(() => {
     if (course && course.modules.length > 0 && !activeModuleId) {
       setActiveModuleId(course.modules[0].id);
     }
+    // Reset lock when module changes
+    setIsVideoLocked(true);
   }, [course, activeModuleId]);
 
   if (!course) {
@@ -335,17 +338,17 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-full sm:w-85 bg-white border-r border-slate-100 transform transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] lg:relative lg:translate-x-0 lg:z-0
+        fixed inset-y-0 left-0 z-50 w-full sm:w-80 bg-white border-r border-slate-100 transform transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] lg:relative lg:translate-x-0 lg:z-0
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="p-8 border-b border-slate-50">
-          <div className="flex items-center justify-between mb-8">
+        <div className="p-6 sm:p-8 border-b border-slate-50">
+          <div className="flex items-center justify-between mb-6 sm:mb-8">
             <div>
-              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Curriculum</h2>
-              <p className="text-xs font-medium text-slate-400 mt-1">{course.modules.length} lessons to complete</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Curriculum</h2>
+              <p className="text-[10px] sm:text-xs font-medium text-slate-400 mt-1">{course.modules.length} lessons to complete</p>
             </div>
             <button 
-              className="lg:hidden p-2.5 hover:bg-slate-50 rounded-2xl transition-colors" 
+              className="lg:hidden p-2 hover:bg-slate-50 rounded-xl transition-colors" 
               onClick={() => setIsSidebarOpen(false)}
             >
               <X size={20} className="text-slate-400" />
@@ -358,11 +361,11 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
               placeholder="Find a lesson..." 
               value={moduleSearch}
               onChange={(e) => setModuleSearch(e.target.value)}
-              className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 py-3.5 pl-11 pr-4 text-sm outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all placeholder:text-slate-400"
+              className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 py-3 sm:py-3.5 pl-11 pr-4 text-sm outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all placeholder:text-slate-400"
             />
           </div>
         </div>
-        <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100vh-220px)] custom-scrollbar">
+        <nav className="p-3 sm:p-4 space-y-1.5 sm:space-y-2 overflow-y-auto h-[calc(100vh-180px)] sm:h-[calc(100vh-220px)] custom-scrollbar">
           {filteredModules.map((module, index) => (
             <button
               key={module.id}
@@ -417,76 +420,106 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
 
       {/* Main Content */}
       <main className="flex-grow bg-slate-50/20 overflow-y-auto h-screen custom-scrollbar">
-        <div className="max-w-5xl mx-auto px-4 py-8 sm:py-12 sm:px-8 lg:px-12">
+        <div className="max-w-5xl mx-auto px-4 py-6 sm:py-12 sm:px-8 lg:px-12">
           {/* Video Player Container */}
-          <div className="relative group mb-10">
-            <div className="absolute -inset-4 bg-indigo-500/5 rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-            <div className="relative aspect-video w-full rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden bg-slate-900 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] ring-1 ring-white/10">
+          <div className="relative group mb-6 sm:mb-10">
+            <div className="absolute -inset-2 sm:-inset-4 bg-indigo-500/5 rounded-2xl sm:rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            <div className="relative aspect-video w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-slate-900 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.2)] sm:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] ring-1 ring-white/10">
               <iframe
-                src={activeModule.videoUrl}
+                src={`${activeModule.videoUrl}${activeModule.videoUrl.includes('?') ? '&' : '?'}modestbranding=1&rel=0`}
                 title={activeModule.contentTitle}
                 className="w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
+              
+              {/* Protection Shield Overlay */}
+              <AnimatePresence>
+                {isVideoLocked && (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onClick={() => setIsVideoLocked(false)}
+                    className="absolute inset-0 z-10 bg-slate-900/20 backdrop-blur-[2px] flex flex-col items-center justify-center cursor-pointer group/shield"
+                  >
+                    <div className="h-16 w-16 sm:h-24 sm:w-24 rounded-full bg-white/20 backdrop-blur-xl border border-white/30 flex items-center justify-center text-white shadow-2xl group-hover/shield:scale-110 group-hover/shield:bg-indigo-600 transition-all duration-500">
+                      <PlayCircle size={40} fill="currentColor" className="sm:w-14 sm:h-14" />
+                    </div>
+                    <p className="mt-4 text-white font-bold text-xs sm:text-sm uppercase tracking-[0.2em] drop-shadow-lg">Click to Play & Interact</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Re-lock button (visible on hover when unlocked) */}
+              {!isVideoLocked && (
+                <button 
+                  onClick={() => setIsVideoLocked(true)}
+                  className="absolute top-4 right-4 z-20 p-2 rounded-full bg-black/40 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all hover:bg-indigo-600"
+                  title="Enable Protection"
+                >
+                  <Settings size={16} />
+                </button>
+              )}
             </div>
           </div>
 
           {/* Header Info */}
-          <div className="mb-12">
-            <div className="flex flex-wrap items-center gap-3 mb-6">
-              <span className="bg-indigo-50 text-indigo-600 text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-[0.15em] border border-indigo-100/50">
+          <div className="mb-8 sm:mb-12">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+              <span className="bg-indigo-50 text-indigo-600 text-[9px] sm:text-[10px] font-bold px-3 sm:px-4 py-1 sm:py-1.5 rounded-full uppercase tracking-[0.15em] border border-indigo-100/50">
                 Module {(activeIndex + 1).toString().padStart(2, '0')}
               </span>
               <div className="h-1 w-1 rounded-full bg-slate-200" />
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">
+              <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">
                 {course.instructor}
               </span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-black text-slate-900 mb-4 tracking-tight leading-tight">{activeModule.contentTitle}</h1>
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl font-medium mb-8">
+            <h1 className="text-xl sm:text-4xl font-black text-slate-900 mb-3 sm:mb-4 tracking-tight leading-tight">{activeModule.contentTitle}</h1>
+            <p className="text-sm sm:text-lg text-slate-600 leading-relaxed max-w-2xl font-medium mb-6 sm:mb-8">
               {activeModule.contentDescription}
             </p>
           </div>
 
           {/* Resources Grid */}
-          <div className="grid gap-6 sm:grid-cols-2 mb-16">
+          <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 mb-10 sm:mb-16">
             <ResourceCard 
               title="Lecture Notes" 
               subtitle="Comprehensive PDF guide" 
-              icon={<FileText size={24} />} 
+              icon={<FileText size={20} className="sm:w-6 sm:h-6" />} 
               url={activeModule.pdfUrl}
               color="red"
             />
             <ResourceCard 
               title="Practice Sheet" 
               subtitle="Test your understanding" 
-              icon={<Layout size={24} />} 
+              icon={<Layout size={20} className="sm:w-6 sm:h-6" />} 
               url={activeModule.practiceSheetUrl}
               color="emerald"
             />
           </div>
 
           {/* Footer Navigation */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-12 border-t border-slate-100">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 pt-8 sm:pt-12 border-t border-slate-100">
             <button 
               onClick={() => window.open(course.routineUrl, '_blank')}
-              className="group flex items-center gap-3 px-8 py-4 rounded-2xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-all active:scale-95"
+              className="w-full sm:w-auto group flex items-center justify-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-all active:scale-95"
             >
               <Calendar size={18} className="group-hover:rotate-12 transition-transform" />
-              View Full Routine
+              <span className="text-sm sm:text-base">View Full Routine</span>
               <ExternalLink size={14} className="opacity-40" />
             </button>
 
             <button 
               onClick={handleNextLesson}
-              className="group flex items-center gap-3 px-10 py-4 rounded-2xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 hover:shadow-indigo-200 active:scale-95"
+              className="w-full sm:w-auto group flex items-center justify-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 hover:shadow-indigo-200 active:scale-95"
             >
-              <span>{activeIndex < course.modules.length - 1 ? 'Next Lesson' : 'Finish Course'}</span>
+              <span className="text-sm sm:text-base">{activeIndex < course.modules.length - 1 ? 'Next Lesson' : 'Finish Course'}</span>
               {activeIndex < course.modules.length - 1 ? (
-                <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                <ChevronRight size={18} className="sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
               ) : (
-                <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                <ArrowLeft size={18} className="sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform" />
               )}
             </button>
           </div>
@@ -514,13 +547,13 @@ const ResourceCard = ({ title, subtitle, icon, url, color }: { title: string; su
   
   if (!isAvailable) {
     return (
-      <div className="flex items-center gap-5 p-6 rounded-[2rem] border border-slate-100 bg-slate-50/50 opacity-60 grayscale">
-        <div className="h-14 w-14 shrink-0 rounded-2xl bg-white flex items-center justify-center text-slate-300 shadow-sm">
+      <div className="flex items-center gap-4 sm:gap-5 p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-100 bg-slate-50/50 opacity-60 grayscale">
+        <div className="h-10 w-10 sm:h-14 sm:w-14 shrink-0 rounded-xl sm:rounded-2xl bg-white flex items-center justify-center text-slate-300 shadow-sm">
           {icon}
         </div>
         <div>
-          <h4 className="font-bold text-slate-400">{title}</h4>
-          <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mt-1">Not Available</p>
+          <h4 className="text-sm sm:text-base font-bold text-slate-400">{title}</h4>
+          <p className="text-[9px] sm:text-[10px] font-bold text-slate-300 uppercase tracking-widest mt-0.5 sm:mt-1">Not Available</p>
         </div>
       </div>
     );
@@ -535,17 +568,17 @@ const ResourceCard = ({ title, subtitle, icon, url, color }: { title: string; su
   return (
     <button 
       onClick={() => window.open(url, '_blank')}
-      className="group flex items-center gap-5 p-6 rounded-[2rem] border border-slate-100 bg-white hover:border-indigo-500/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-500 w-full text-left cursor-pointer"
+      className="group flex items-center gap-4 sm:gap-5 p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-100 bg-white hover:border-indigo-500/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-500 w-full text-left cursor-pointer"
     >
-      <div className={`h-14 w-14 shrink-0 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-sm group-hover:text-white group-hover:shadow-lg ${colorClasses[color]}`}>
+      <div className={`h-10 w-10 sm:h-14 sm:w-14 shrink-0 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-500 shadow-sm group-hover:text-white group-hover:shadow-lg ${colorClasses[color]}`}>
         {icon}
       </div>
       <div className="min-w-0">
-        <h4 className="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{title}</h4>
-        <p className="text-xs font-medium text-slate-400 mt-0.5">{subtitle}</p>
+        <h4 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{title}</h4>
+        <p className="text-[10px] sm:text-xs font-medium text-slate-400 mt-0.5">{subtitle}</p>
       </div>
       <div className="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
-        <ChevronRight size={20} className="text-indigo-600" />
+        <ChevronRight size={18} className="sm:w-5 sm:h-5 text-indigo-600" />
       </div>
     </button>
   );
@@ -573,18 +606,18 @@ const AdminLoginPage = ({ onLogin }: { onLogin: (user: string, key: string) => b
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-lg overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)]"
+        className="w-full max-w-lg overflow-hidden rounded-3xl sm:rounded-[2.5rem] border border-slate-100 bg-white shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)]"
       >
-        <div className="bg-slate-900 p-10 text-center text-white relative">
+        <div className="bg-slate-900 p-8 sm:p-10 text-center text-white relative">
           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(79,70,229,0.2),transparent)]" />
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-indigo-600 shadow-xl shadow-indigo-500/20 relative z-10">
-            <LogIn size={36} />
+          <div className="mx-auto mb-4 sm:mb-6 flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl sm:rounded-3xl bg-indigo-600 shadow-xl shadow-indigo-500/20 relative z-10">
+            <LogIn size={28} className="sm:w-9 sm:h-9" />
           </div>
-          <h2 className="text-3xl font-black tracking-tight relative z-10">Admin Portal</h2>
-          <p className="mt-3 text-slate-400 font-medium relative z-10">Secure access to your dashboard</p>
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight relative z-10">Admin Portal</h2>
+          <p className="mt-2 sm:mt-3 text-sm sm:text-base text-slate-400 font-medium relative z-10">Secure access to your dashboard</p>
         </div>
         
-        <form onSubmit={handleSubmit} className="p-10 space-y-8">
+        <form onSubmit={handleSubmit} className="p-8 sm:p-10 space-y-6 sm:space-y-8">
           {error && (
             <motion.div 
               initial={{ opacity: 0, x: -10 }}
@@ -668,60 +701,63 @@ const SortableModuleCard = ({ module, index, onEdit, onDelete }: {
     <div 
       ref={setNodeRef}
       style={style}
-      className={`group relative rounded-3xl border border-slate-100 bg-white p-6 transition-all duration-300 cursor-pointer ${
+      className={`group relative rounded-2xl sm:rounded-3xl border border-slate-100 bg-white p-4 sm:p-6 transition-all duration-300 cursor-pointer ${
         isDragging ? 'shadow-2xl border-indigo-200 ring-4 ring-indigo-500/5' : 'shadow-sm hover:shadow-xl hover:border-indigo-100'
       }`}
       onClick={onEdit}
     >
-      <div className="flex items-start justify-between mb-5">
-        <div className="flex items-center gap-4">
+      <div className="flex items-start justify-between mb-4 sm:mb-5">
+        <div className="flex items-center gap-3 sm:gap-4">
           <div 
             {...attributes} 
             {...listeners}
-            className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 cursor-grab active:cursor-grabbing transition-all"
+            className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg sm:rounded-xl text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 cursor-grab active:cursor-grabbing transition-all"
             onClick={(e) => e.stopPropagation()}
           >
-            <GripVertical size={20} />
+            <GripVertical size={18} className="sm:w-5 sm:h-5" />
           </div>
           <div className="relative">
-            <div className="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-inner">
-              <PlayCircle size={24} />
+            <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl sm:rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-inner">
+              <PlayCircle size={20} className="sm:w-6 sm:h-6" />
             </div>
-            <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-slate-900 text-white text-[10px] font-black flex items-center justify-center border-2 border-white shadow-sm">
+            <div className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-slate-900 text-white text-[9px] sm:text-[10px] font-black flex items-center justify-center border-2 border-white shadow-sm">
               {index + 1}
             </div>
           </div>
         </div>
         <button 
-          onClick={onDelete}
-          className="h-10 w-10 flex items-center justify-center rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(e);
+          }}
+          className="h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-lg sm:rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all"
         >
-          <Trash2 size={18} />
+          <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
         </button>
       </div>
-      <div className="space-y-2">
-        <h4 className="text-lg font-black text-slate-900 line-clamp-1 group-hover:text-indigo-600 transition-colors">
+      <div className="space-y-1 sm:space-y-2">
+        <h4 className="text-base sm:text-lg font-black text-slate-900 line-clamp-1 group-hover:text-indigo-600 transition-colors">
           {module.contentTitle || 'Untitled Lesson'}
         </h4>
-        <p className="text-sm text-slate-500 line-clamp-2 font-medium leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-500 line-clamp-2 font-medium leading-relaxed">
           {module.contentDescription || 'No description provided for this module.'}
         </p>
       </div>
-      <div className="mt-6 pt-5 border-t border-slate-50 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-[10px] font-black text-indigo-600 uppercase tracking-widest">
-          <Edit size={14} />
+      <div className="mt-4 sm:mt-6 pt-4 sm:pt-5 border-t border-slate-50 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-[9px] sm:text-[10px] font-black text-indigo-600 uppercase tracking-widest">
+          <Edit size={12} className="sm:w-3.5 sm:h-3.5" />
           <span>Edit Details</span>
         </div>
         {module.videoUrl && (
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-            <PlayCircle size={14} />
+          <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold text-slate-400">
+            <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            <span>Video Ready</span>
           </div>
         )}
       </div>
     </div>
   );
 };
-
 const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => void }) => {
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [isAdding, setIsAdding] = useState(false);
@@ -784,16 +820,16 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
   );
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-12 sm:py-16 sm:px-8 lg:px-10">
-      <div className="mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-8">
+    <div className="mx-auto max-w-7xl px-4 sm:px-8 py-8 sm:py-16 lg:px-10">
+      <div className="mb-10 sm:mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-6 sm:gap-8">
         <div>
-          <div className="inline-flex items-center gap-2 mb-4 rounded-full bg-indigo-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 border border-indigo-100/50">
+          <div className="inline-flex items-center gap-2 mb-3 sm:mb-4 rounded-full bg-indigo-50 px-3 sm:px-4 py-1 sm:py-1.5 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 border border-indigo-100/50">
             Management
           </div>
-          <h1 className="text-4xl font-black tracking-tight text-slate-900">Admin Dashboard</h1>
-          <p className="mt-3 text-lg text-slate-500 font-medium">Manage your curriculum and student resources</p>
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">Admin Dashboard</h1>
+          <p className="mt-2 sm:mt-3 text-base sm:text-lg text-slate-500 font-medium">Manage your curriculum and student resources</p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="relative group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
             <input 
@@ -801,7 +837,7 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
               placeholder="Search courses..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full sm:w-64 rounded-2xl border border-slate-100 bg-white py-4 pl-12 pr-4 text-sm font-bold outline-none focus:border-indigo-500/30 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-sm"
+              className="w-full sm:w-64 rounded-xl sm:rounded-2xl border border-slate-100 bg-white py-3.5 sm:py-4 pl-12 pr-4 text-sm font-bold outline-none focus:border-indigo-500/30 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-sm"
             />
           </div>
           <button 
@@ -820,40 +856,40 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                 modules: []
               });
             }}
-            className="flex items-center justify-center gap-3 rounded-[1.5rem] bg-indigo-600 px-8 py-4 font-black text-white shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] transition-all hover:bg-indigo-700 active:scale-95"
+            className="flex items-center justify-center gap-2 sm:gap-3 rounded-xl sm:rounded-[1.5rem] bg-indigo-600 px-6 sm:px-8 py-3.5 sm:py-4 font-black text-white shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] transition-all hover:bg-indigo-700 active:scale-95 text-sm sm:text-base"
           >
-            <Plus size={20} />
+            <Plus size={18} className="sm:w-5 sm:h-5" />
             Create New Course
           </button>
         </div>
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid gap-4 sm:gap-6">
         {filteredCourses.map(course => (
-          <div key={course.id} className="group flex flex-col sm:flex-row sm:items-center justify-between rounded-[2rem] border border-slate-100 bg-white p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-500">
-            <div className="flex items-center gap-6 mb-6 sm:mb-0">
-              <div className="h-16 w-16 shrink-0 rounded-[1.25rem] bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform duration-500">
-                <BookOpen size={28} />
+          <div key={course.id} className="group flex flex-col sm:flex-row sm:items-center justify-between rounded-2xl sm:rounded-[2rem] border border-slate-100 bg-white p-5 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-500">
+            <div className="flex items-center gap-4 sm:gap-6 mb-5 sm:mb-0">
+              <div className="h-12 w-12 sm:h-16 sm:w-16 shrink-0 rounded-xl sm:rounded-[1.25rem] bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform duration-500">
+                <BookOpen size={24} className="sm:w-7 sm:h-7" />
               </div>
               <div className="min-w-0">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">{course.category}</span>
-                  <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">• {course.modules.length} Lessons</span>
+                <div className="flex items-center gap-2 mb-1 sm:mb-1.5">
+                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">{course.category}</span>
+                  <span className="text-[9px] sm:text-[10px] font-bold text-slate-300 uppercase tracking-widest">• {course.modules.length} Lessons</span>
                 </div>
-                <h3 className="text-xl font-black text-slate-900 truncate group-hover:text-indigo-600 transition-colors">{course.title}</h3>
-                <p className="text-sm text-slate-400 font-medium mt-1">Instructor: {course.instructor}</p>
+                <h3 className="text-lg sm:text-xl font-black text-slate-900 truncate group-hover:text-indigo-600 transition-colors">{course.title}</h3>
+                <p className="text-xs sm:text-sm text-slate-400 font-medium mt-0.5 sm:mt-1">Instructor: {course.instructor}</p>
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 border-t sm:border-t-0 pt-6 sm:pt-0">
+            <div className="flex flex-wrap items-center justify-start sm:justify-end gap-2 sm:gap-3 border-t sm:border-t-0 pt-4 sm:pt-0">
               <button 
                 onClick={() => {
                   setIsAdding(false);
                   setEditingCourse(course);
                 }}
-                className="flex items-center gap-2 px-5 py-3 rounded-2xl text-slate-600 bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 transition-all font-bold text-sm"
+                className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-slate-600 bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 transition-all font-bold text-xs sm:text-sm"
               >
-                <Edit size={18} />
-                <span>Edit Details</span>
+                <Edit size={16} className="sm:w-[18px] sm:h-[18px]" />
+                <span>Edit</span>
               </button>
               <button 
                 onClick={async () => {
@@ -867,17 +903,17 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                     }
                   }
                 }}
-                className="flex items-center gap-2 px-5 py-3 rounded-2xl text-red-600 bg-red-50 hover:bg-red-100 transition-all font-bold text-sm"
+                className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-red-600 bg-red-50 hover:bg-red-100 transition-all font-bold text-xs sm:text-sm"
               >
-                <Trash2 size={18} />
+                <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
                 <span>Delete</span>
               </button>
               <button 
                 onClick={() => navigate(`/${course.id}`)} 
-                className="flex items-center gap-2 px-5 py-3 rounded-2xl text-white bg-slate-900 hover:bg-indigo-600 transition-all font-bold text-sm cursor-pointer shadow-lg shadow-slate-100"
+                className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-white bg-slate-900 hover:bg-indigo-600 transition-all font-bold text-xs sm:text-sm cursor-pointer shadow-lg shadow-slate-100"
               >
-                <ExternalLink size={18} />
-                <span>Live View</span>
+                <ExternalLink size={16} className="sm:w-[18px] sm:h-[18px]" />
+                <span>View</span>
               </button>
             </div>
           </div>
@@ -894,88 +930,88 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
       </div>
 
       {editingCourse && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xl">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/60 p-2 sm:p-4 backdrop-blur-xl">
           <motion.div 
             initial={{ opacity: 0, y: 40, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            className="w-full max-w-6xl max-h-[92vh] overflow-hidden rounded-[3rem] bg-white shadow-[0_50px_120px_-20px_rgba(0,0,0,0.3)] flex flex-col"
+            className="w-full max-w-6xl max-h-[96vh] sm:max-h-[92vh] overflow-hidden rounded-2xl sm:rounded-[3rem] bg-white shadow-[0_50px_120px_-20px_rgba(0,0,0,0.3)] flex flex-col"
           >
             {/* Modal Header */}
-            <div className="px-8 py-8 sm:px-12 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
-              <div className="flex items-center gap-5">
-                <div className="h-14 w-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-200">
-                  {isAdding ? <Plus size={28} /> : <Edit size={28} />}
+            <div className="px-6 py-6 sm:px-12 sm:py-8 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
+              <div className="flex items-center gap-4 sm:gap-5">
+                <div className="h-10 w-10 sm:h-14 sm:w-14 rounded-xl sm:rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                  {isAdding ? <Plus size={20} className="sm:w-7 sm:h-7" /> : <Edit size={20} className="sm:w-7 sm:h-7" />}
                 </div>
                 <div>
-                  <h2 className="text-3xl font-black text-slate-900 tracking-tight leading-none">
+                  <h2 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none">
                     {isAdding ? 'Create New Course' : 'Refine Course'}
                   </h2>
-                  <p className="text-sm text-slate-400 font-bold mt-2 uppercase tracking-widest">
+                  <p className="text-[10px] sm:text-sm text-slate-400 font-bold mt-1.5 sm:mt-2 uppercase tracking-widest truncate max-w-[180px] sm:max-w-none">
                     {isAdding ? 'New Curriculum Setup' : `Editing: ${editingCourse.title || 'Draft Course'}`}
                   </p>
                 </div>
               </div>
               <button 
                 onClick={() => setEditingCourse(null)} 
-                className="h-12 w-12 flex items-center justify-center hover:bg-slate-50 rounded-2xl transition-all text-slate-400 hover:text-slate-900 active:scale-90"
+                className="h-10 w-10 sm:h-12 sm:w-12 flex items-center justify-center hover:bg-slate-50 rounded-xl sm:rounded-2xl transition-all text-slate-400 hover:text-slate-900 active:scale-90"
               >
-                <X size={28} />
+                <X size={24} className="sm:w-7 sm:h-7" />
               </button>
             </div>
 
             {/* Modal Content - Scrollable Area */}
-            <div className="flex-grow overflow-y-auto custom-scrollbar p-8 sm:p-12">
-              <div className="grid gap-12 lg:grid-cols-[1fr_1.5fr]">
+            <div className="flex-grow overflow-y-auto custom-scrollbar p-6 sm:p-12">
+              <div className="grid gap-8 sm:gap-12 lg:grid-cols-[1fr_1.5fr]">
                 {/* Left Column: Course Details */}
-                <div className="space-y-10">
+                <div className="space-y-8 sm:space-y-10">
                   <section>
-                    <div className="flex items-center gap-3 mb-6">
+                    <div className="flex items-center gap-3 mb-5 sm:mb-6">
                       <div className="h-2 w-2 rounded-full bg-indigo-600" />
-                      <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em]">Basic Information</h3>
+                      <h3 className="text-[10px] sm:text-xs font-black text-slate-900 uppercase tracking-[0.2em]">Basic Information</h3>
                     </div>
-                    <div className="space-y-6">
+                    <div className="space-y-5 sm:space-y-6">
                       <div className="group">
-                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Course ID (Unique)</label>
+                        <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Course ID (Unique)</label>
                         <div className="relative">
                           <input 
                             type="text" 
                             disabled={!isAdding}
                             value={editingCourse.id}
                             onChange={e => setEditingCourse({...editingCourse, id: e.target.value})}
-                            className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 pl-12 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all disabled:opacity-50 font-bold text-slate-900"
+                            className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 pl-11 sm:pl-12 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all disabled:opacity-50 font-bold text-sm sm:text-base text-slate-900"
                             placeholder="e.g. react-mastery"
                           />
-                          <Layout className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                          <Layout className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 sm:w-[18px] sm:h-[18px]" size={16} />
                         </div>
                       </div>
                       <div className="group">
-                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Course Title</label>
+                        <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Course Title</label>
                         <input 
                           type="text" 
                           value={editingCourse.title}
                           onChange={e => setEditingCourse({...editingCourse, title: e.target.value})}
-                          className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-slate-900"
+                          className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-sm sm:text-base text-slate-900"
                           placeholder="Enter a compelling title"
                         />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="group">
-                          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Instructor</label>
+                          <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Instructor</label>
                           <input 
                             type="text" 
                             value={editingCourse.instructor}
                             onChange={e => setEditingCourse({...editingCourse, instructor: e.target.value})}
-                            className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-slate-900"
+                            className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-sm sm:text-base text-slate-900"
                             placeholder="Instructor name"
                           />
                         </div>
                         <div className="group">
-                          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Category</label>
+                          <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Category</label>
                           <div className="relative">
                             <select 
                               value={editingCourse.category}
                               onChange={e => setEditingCourse({...editingCourse, category: e.target.value})}
-                              className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all appearance-none font-bold text-slate-900"
+                              className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all appearance-none font-bold text-sm sm:text-base text-slate-900"
                             >
                               <option>Skill Development</option>
                               <option>Academic</option>
@@ -990,32 +1026,32 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                   </section>
 
                   <section>
-                    <div className="flex items-center gap-3 mb-6">
+                    <div className="flex items-center gap-3 mb-5 sm:mb-6">
                       <div className="h-2 w-2 rounded-full bg-indigo-600" />
-                      <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em]">Resources & Details</h3>
+                      <h3 className="text-[10px] sm:text-xs font-black text-slate-900 uppercase tracking-[0.2em]">Resources & Details</h3>
                     </div>
-                    <div className="space-y-6">
+                    <div className="space-y-5 sm:space-y-6">
                       <div className="group">
-                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Course Overview</label>
+                        <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Course Overview</label>
                         <textarea 
-                          rows={4}
+                          rows={3}
                           value={editingCourse.description}
                           onChange={e => setEditingCourse({...editingCourse, description: e.target.value})}
-                          className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all resize-none font-bold text-slate-900"
+                          className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all resize-none font-bold text-sm sm:text-base text-slate-900"
                           placeholder="What will students learn?"
                         />
                       </div>
                       <div className="group">
-                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Routine URL</label>
+                        <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Routine URL</label>
                         <div className="relative">
                           <input 
                             type="text" 
                             value={editingCourse.routineUrl}
                             onChange={e => setEditingCourse({...editingCourse, routineUrl: e.target.value})}
-                            className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 p-4 pl-12 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-slate-900"
+                            className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 pl-11 sm:pl-12 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-sm sm:text-base text-slate-900"
                             placeholder="Link to schedule"
                           />
-                          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 sm:w-[18px] sm:h-[18px]" size={16} />
                         </div>
                       </div>
                     </div>
@@ -1023,11 +1059,11 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                 </div>
 
                 {/* Right Column: Module Management */}
-                <div className="bg-slate-50/50 rounded-[2.5rem] p-8 sm:p-10 border border-slate-100 flex flex-col min-h-[500px]">
-                  <div className="flex items-center justify-between mb-8 shrink-0">
+                <div className="bg-slate-50/50 rounded-2xl sm:rounded-[2.5rem] p-6 sm:p-10 border border-slate-100 flex flex-col min-h-[400px] sm:min-h-[500px]">
+                  <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-4 mb-8 shrink-0">
                     <div>
-                      <h3 className="text-2xl font-black text-slate-900 tracking-tight">Curriculum Builder</h3>
-                      <p className="text-sm text-slate-400 font-bold mt-1 uppercase tracking-widest">
+                      <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Curriculum Builder</h3>
+                      <p className="text-[10px] sm:text-sm text-slate-400 font-bold mt-1 uppercase tracking-widest">
                         {editingCourse.modules.length} Lessons Configured
                       </p>
                     </div>
@@ -1039,9 +1075,9 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                           setEditingCourse({ ...editingCourse, modules: newModules });
                           setEditingModuleIndex(newModules.length - 1);
                         }}
-                        className="flex items-center gap-2 text-xs font-black text-white bg-indigo-600 px-6 py-3.5 rounded-2xl hover:bg-indigo-700 transition-all active:scale-95 shadow-lg shadow-indigo-100"
+                        className="w-full xs:w-auto flex items-center justify-center gap-2 text-[10px] sm:text-xs font-black text-white bg-indigo-600 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl hover:bg-indigo-700 transition-all active:scale-95 shadow-lg shadow-indigo-100"
                       >
-                        <Plus size={18} />
+                        <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
                         Add Lesson
                       </button>
                     )}
@@ -1058,7 +1094,7 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                           items={editingCourse.modules.map(m => m.id)}
                           strategy={verticalListSortingStrategy}
                         >
-                          <div className="grid gap-4">
+                          <div className="grid gap-3 sm:gap-4">
                             {editingCourse.modules.map((m, i) => (
                               <SortableModuleCard 
                                 key={m.id}
@@ -1073,11 +1109,11 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                               />
                             ))}
                             {editingCourse.modules.length === 0 && (
-                              <div className="py-20 text-center bg-white rounded-3xl border-2 border-dashed border-slate-100">
-                                <div className="h-16 w-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-200">
-                                  <BookOpen size={32} />
+                              <div className="py-16 sm:py-20 text-center bg-white rounded-2xl sm:rounded-3xl border-2 border-dashed border-slate-100">
+                                <div className="h-12 w-12 sm:h-16 sm:w-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-200">
+                                  <BookOpen size={24} className="sm:w-8 sm:h-8" />
                                 </div>
-                                <p className="text-slate-400 font-bold">Your curriculum is empty</p>
+                                <p className="text-xs sm:text-slate-400 font-bold">Your curriculum is empty</p>
                                 <button 
                                   onClick={() => {
                                     const newModule = { id: Math.random().toString(36).substr(2, 9), title: '', description: '', videoUrl: '', pdfUrl: '', practiceSheetUrl: '', contentTitle: '', contentDescription: '' };
@@ -1085,7 +1121,7 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                                     setEditingCourse({ ...editingCourse, modules: newModules });
                                     setEditingModuleIndex(newModules.length - 1);
                                   }}
-                                  className="mt-4 text-sm font-black text-indigo-600 hover:underline"
+                                  className="mt-3 text-[10px] sm:text-sm font-black text-indigo-600 hover:underline"
                                 >
                                   Start building now
                                 </button>
@@ -1098,18 +1134,18 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                       <motion.div 
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm"
+                        className="bg-white rounded-2xl sm:rounded-3xl border border-slate-100 p-6 sm:p-8 shadow-sm"
                       >
-                        <div className="flex items-center justify-between mb-10">
+                        <div className="flex items-center justify-between mb-8 sm:mb-10">
                           <button 
                             onClick={() => setEditingModuleIndex(null)}
-                            className="flex items-center gap-2 text-[10px] font-black text-slate-400 hover:text-indigo-600 transition-all uppercase tracking-[0.2em]"
+                            className="flex items-center gap-2 text-[9px] sm:text-[10px] font-black text-slate-400 hover:text-indigo-600 transition-all uppercase tracking-[0.2em]"
                           >
-                            <ArrowLeft size={16} />
-                            Back to List
+                            <ArrowLeft size={14} className="sm:w-4 sm:h-4" />
+                            Back
                           </button>
-                          <div className="flex items-center gap-4">
-                            <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg uppercase tracking-widest">
+                          <div className="flex items-center gap-3 sm:gap-4">
+                            <span className="text-[9px] sm:text-[10px] font-black text-indigo-600 bg-indigo-50 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg uppercase tracking-widest">
                               Lesson {editingModuleIndex + 1}
                             </span>
                             <button 
@@ -1118,16 +1154,16 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                                 setEditingCourse({...editingCourse, modules: newModules});
                                 setEditingModuleIndex(null);
                               }}
-                              className="h-9 w-9 flex items-center justify-center rounded-xl text-red-400 hover:text-red-600 hover:bg-red-50 transition-all"
+                              className="h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center rounded-lg sm:rounded-xl text-red-400 hover:text-red-600 hover:bg-red-50 transition-all"
                             >
-                              <Trash2 size={18} />
+                              <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
                             </button>
                           </div>
                         </div>
 
-                        <div className="space-y-8">
+                        <div className="space-y-6 sm:space-y-8">
                           <div className="group">
-                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Lesson Title</label>
+                            <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Lesson Title</label>
                             <input 
                               placeholder="e.g. Introduction to React Hooks"
                               value={editingCourse.modules[editingModuleIndex].contentTitle}
@@ -1136,11 +1172,11 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                                 newModules[editingModuleIndex].contentTitle = e.target.value;
                                 setEditingCourse({...editingCourse, modules: newModules});
                               }}
-                              className="w-full rounded-2xl border border-slate-100 p-4 text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
+                              className="w-full rounded-xl sm:rounded-2xl border border-slate-100 p-3.5 sm:p-4 text-xs sm:text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
                             />
                           </div>
                           <div className="group">
-                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Lesson Description</label>
+                            <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Lesson Description</label>
                             <textarea 
                               rows={3}
                               placeholder="Briefly describe what this lesson covers..."
@@ -1150,12 +1186,12 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                                 newModules[editingModuleIndex].contentDescription = e.target.value;
                                 setEditingCourse({...editingCourse, modules: newModules});
                               }}
-                              className="w-full rounded-2xl border border-slate-100 p-4 text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all resize-none"
+                              className="w-full rounded-xl sm:rounded-2xl border border-slate-100 p-3.5 sm:p-4 text-xs sm:text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all resize-none"
                             />
                           </div>
-                          <div className="grid gap-6 sm:grid-cols-2">
+                          <div className="grid gap-5 sm:gap-6 sm:grid-cols-2">
                             <div className="group">
-                              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Video URL (Embed)</label>
+                              <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Video URL (Embed)</label>
                               <div className="relative">
                                 <input 
                                   placeholder="https://youtube.com/embed/..."
@@ -1165,13 +1201,13 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                                     newModules[editingModuleIndex].videoUrl = e.target.value;
                                     setEditingCourse({...editingCourse, modules: newModules});
                                   }}
-                                  className="w-full rounded-2xl border border-slate-100 p-4 pl-12 text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
+                                  className="w-full rounded-xl sm:rounded-2xl border border-slate-100 p-3.5 sm:p-4 pl-11 sm:pl-12 text-xs sm:text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
                                 />
-                                <PlayCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                                <PlayCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 sm:w-[18px] sm:h-[18px]" size={16} />
                               </div>
                             </div>
                             <div className="group">
-                              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Lecture PDF</label>
+                              <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Lecture PDF</label>
                               <div className="relative">
                                 <input 
                                   placeholder="Link to notes"
@@ -1181,13 +1217,13 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                                     newModules[editingModuleIndex].pdfUrl = e.target.value;
                                     setEditingCourse({...editingCourse, modules: newModules});
                                   }}
-                                  className="w-full rounded-2xl border border-slate-100 p-4 pl-12 text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
+                                  className="w-full rounded-xl sm:rounded-2xl border border-slate-100 p-3.5 sm:p-4 pl-11 sm:pl-12 text-xs sm:text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
                                 />
-                                <FileText className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                                <FileText className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 sm:w-[18px] sm:h-[18px]" size={16} />
                               </div>
                             </div>
                             <div className="sm:col-span-2 group">
-                              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-indigo-600 transition-colors">Practice Sheet</label>
+                              <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Practice Sheet</label>
                               <div className="relative">
                                 <input 
                                   placeholder="Link to exercises"
@@ -1197,16 +1233,16 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                                     newModules[editingModuleIndex].practiceSheetUrl = e.target.value;
                                     setEditingCourse({...editingCourse, modules: newModules});
                                   }}
-                                  className="w-full rounded-2xl border border-slate-100 p-4 pl-12 text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
+                                  className="w-full rounded-xl sm:rounded-2xl border border-slate-100 p-3.5 sm:p-4 pl-11 sm:pl-12 text-xs sm:text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
                                 />
-                                <Layout className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                                <Layout className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 sm:w-[18px] sm:h-[18px]" size={16} />
                               </div>
                             </div>
                           </div>
-                          <div className="pt-4">
+                          <div className="pt-2 sm:pt-4">
                             <button 
                               onClick={() => setEditingModuleIndex(null)}
-                              className="w-full rounded-2xl bg-slate-900 px-10 py-4 font-black text-white shadow-xl hover:bg-indigo-600 transition-all active:scale-95"
+                              className="w-full rounded-xl sm:rounded-2xl bg-slate-900 px-8 sm:px-10 py-3.5 sm:py-4 font-black text-white shadow-xl hover:bg-indigo-600 transition-all active:scale-95 text-sm sm:text-base"
                             >
                               Save Lesson Details
                             </button>
@@ -1220,18 +1256,18 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
             </div>
 
             {/* Modal Footer */}
-            <div className="px-8 py-8 sm:px-12 bg-slate-50/80 backdrop-blur-md border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-4 shrink-0">
+            <div className="px-6 py-6 sm:px-12 sm:py-8 bg-slate-50/80 backdrop-blur-md border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 shrink-0">
               <button 
                 onClick={() => setEditingCourse(null)}
-                className="order-2 sm:order-1 rounded-2xl px-10 py-4 font-black text-slate-400 hover:text-slate-900 transition-all uppercase tracking-[0.2em] text-[10px]"
+                className="order-2 sm:order-1 rounded-xl sm:rounded-2xl px-8 sm:px-10 py-3 sm:py-4 font-black text-slate-400 hover:text-slate-900 transition-all uppercase tracking-[0.2em] text-[9px] sm:text-[10px]"
               >
                 Discard Changes
               </button>
               <button 
                 onClick={() => handleSave(editingCourse)}
-                className="order-1 sm:order-2 flex items-center justify-center gap-3 rounded-2xl bg-indigo-600 px-12 py-4 font-black text-white shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] transition-all hover:bg-indigo-700 active:scale-95"
+                className="order-1 sm:order-2 flex items-center justify-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl bg-indigo-600 px-10 sm:px-12 py-3.5 sm:py-4 font-black text-white shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] transition-all hover:bg-indigo-700 active:scale-95 text-sm sm:text-base"
               >
-                <Save size={20} />
+                <Save size={18} className="sm:w-5 sm:h-5" />
                 {isAdding ? 'Publish Course' : 'Save Changes'}
               </button>
             </div>
@@ -1263,15 +1299,15 @@ const AppContent = ({ courses, isAdmin, handleLogout, handleLogin, fetchCourses,
       if (e.key === 'F12') {
         e.preventDefault();
       }
-      // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U
-      if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) {
-        e.preventDefault();
-      }
-      if (e.ctrlKey && e.key === 'u') {
+      // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U, Ctrl+S, Ctrl+P
+      if (e.ctrlKey && (
+        (e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || 
+        e.key === 'u' || e.key === 's' || e.key === 'p' || e.key === 'a'
+      )) {
         e.preventDefault();
       }
       // Mac shortcuts
-      if (e.metaKey && e.altKey && (e.key === 'i' || e.key === 'j')) {
+      if (e.metaKey && (e.key === 'u' || e.key === 's' || e.key === 'p' || e.key === 'a' || (e.altKey && (e.key === 'i' || e.key === 'j')))) {
         e.preventDefault();
       }
     };
