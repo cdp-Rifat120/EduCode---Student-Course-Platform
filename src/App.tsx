@@ -41,6 +41,7 @@ import {
   VolumeX,
   Maximize,
   RotateCcw,
+  RotateCw,
   Check
 } from 'lucide-react';
 import { 
@@ -374,6 +375,8 @@ const YouTubePlayer = ({ videoUrl, title }: { videoUrl: string, title: string })
       if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
       if (e.code === 'KeyM') { e.preventDefault(); toggleMute(); }
       if (e.code === 'KeyF') { e.preventDefault(); toggleFullscreen(); }
+      if (e.code === 'ArrowRight') { e.preventDefault(); skip(10); }
+      if (e.code === 'ArrowLeft') { e.preventDefault(); skip(-10); }
     };
     window.addEventListener('keydown', handleKeyDown);
 
@@ -437,6 +440,12 @@ const YouTubePlayer = ({ videoUrl, title }: { videoUrl: string, title: string })
     if (!containerRef.current) return;
     if (!document.fullscreenElement) containerRef.current.requestFullscreen();
     else document.exitFullscreen();
+  };
+
+  const skip = (amount: number) => {
+    if (!playerRef.current) return;
+    const currentTime = playerRef.current.getCurrentTime();
+    playerRef.current.seekTo(currentTime + amount, true);
   };
 
   const formatTime = (seconds: number) => {
@@ -585,12 +594,30 @@ const YouTubePlayer = ({ videoUrl, title }: { videoUrl: string, title: string })
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4 sm:gap-8">
-                  <button 
-                    onClick={togglePlay} 
-                    className="h-12 w-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-indigo-600 text-white transition-all active:scale-90 shadow-xl backdrop-blur-md"
-                  >
-                    {isPlaying ? <Pause size={24} fill="currentColor" /> : <PlayCircle size={24} fill="currentColor" />}
-                  </button>
+                  <div className="flex items-center gap-2 sm:gap-4">
+                    <button 
+                      onClick={() => skip(-10)} 
+                      className="text-white/70 hover:text-white transition-colors p-2"
+                      title="Skip back 10s"
+                    >
+                      <RotateCcw size={20} />
+                    </button>
+                    
+                    <button 
+                      onClick={togglePlay} 
+                      className="h-12 w-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-indigo-600 text-white transition-all active:scale-90 shadow-xl backdrop-blur-md"
+                    >
+                      {isPlaying ? <Pause size={24} fill="currentColor" /> : <PlayCircle size={24} fill="currentColor" />}
+                    </button>
+
+                    <button 
+                      onClick={() => skip(10)} 
+                      className="text-white/70 hover:text-white transition-colors p-2"
+                      title="Skip forward 10s"
+                    >
+                      <RotateCw size={20} />
+                    </button>
+                  </div>
 
                   <div className="flex items-center gap-3 group/volume">
                     <button onClick={toggleMute} className="text-white/70 hover:text-white transition-colors">
@@ -618,14 +645,6 @@ const YouTubePlayer = ({ videoUrl, title }: { videoUrl: string, title: string })
                     title="Settings"
                   >
                     <Settings size={20} className={isSettingsOpen ? 'rotate-90' : ''} />
-                  </button>
-                  
-                  <button 
-                    onClick={() => playerRef.current?.seekTo(0)} 
-                    className="h-10 w-10 flex items-center justify-center rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all" 
-                    title="Restart"
-                  >
-                    <RotateCcw size={20} />
                   </button>
                   
                   <button 
