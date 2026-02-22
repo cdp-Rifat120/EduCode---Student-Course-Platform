@@ -154,7 +154,7 @@ const Navbar = ({ isAdmin, onLogout }: { isAdmin: boolean; onLogout: () => void 
             <Code size={18} className="sm:w-[22px] sm:h-[22px]" />
           </div>
           <div className="flex flex-col">
-            <span className="text-lg sm:text-xl font-black tracking-tight text-slate-900 leading-none">EduCode</span>
+            <span className="text-lg sm:text-xl font-black tracking-tight text-slate-900 leading-none">EduStudious</span>
             <span className="text-[8px] sm:text-[10px] font-bold text-indigo-600 uppercase tracking-[0.2em] mt-0.5 sm:mt-1">Academy</span>
           </div>
         </button>
@@ -2082,10 +2082,10 @@ const AppContent = ({ courses, isAdmin, handleLogout, handleLogin, fetchCourses,
             <div className="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
               <Code size={18} />
             </div>
-            <span className="text-lg font-bold text-slate-900">EduCode</span>
+            <span className="text-lg font-bold text-slate-900">EduStudious</span>
           </div>
           <p className="text-sm text-slate-500">
-            © {new Date().getFullYear()} EduCode Learning Platform. All rights reserved.
+            © {new Date().getFullYear()} EduStudious Learning Platform. All rights reserved.
           </p>
         </div>
       </footer>
