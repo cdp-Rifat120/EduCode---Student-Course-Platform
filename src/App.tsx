@@ -25,6 +25,7 @@ import {
   Menu,
   X,
   PlayCircle,
+  Image,
   FileText,
   ExternalLink,
   Calendar,
@@ -822,25 +823,41 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
                 onClick={() => setSelectedSubjectId(subject.id)}
-                className="group relative flex flex-col bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(79,70,229,0.1)] transition-all duration-500 cursor-pointer overflow-hidden"
+                className="group relative flex flex-col bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(79,70,229,0.1)] transition-all duration-500 cursor-pointer overflow-hidden"
               >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-indigo-500/10 transition-colors" />
+                {subject.imageUrl ? (
+                  <div className="relative h-48 w-full overflow-hidden">
+                    <img 
+                      src={subject.imageUrl} 
+                      alt={subject.title}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
+                  </div>
+                ) : (
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-indigo-500/10 transition-colors" />
+                )}
                 
-                <div className="h-14 w-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-sm">
-                  <BookOpen size={28} />
-                </div>
-                
-                <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">{subject.title}</h3>
-                <p className="text-sm text-slate-500 font-medium leading-relaxed mb-8 line-clamp-2">
-                  {subject.description || 'Explore the core concepts and advanced techniques in this subject.'}
-                </p>
-                
-                <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
-                  <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">
-                    {subject.modules.length} Lessons
-                  </span>
-                  <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 group-hover:text-indigo-600 uppercase tracking-widest transition-colors">
-                    View Subject <ChevronRight size={14} />
+                <div className="p-8 pt-6">
+                  {!subject.imageUrl && (
+                    <div className="h-14 w-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-sm">
+                      <BookOpen size={28} />
+                    </div>
+                  )}
+                  
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">{subject.title}</h3>
+                  <p className="text-sm text-slate-500 font-medium leading-relaxed mb-8 line-clamp-2">
+                    {subject.description || 'Explore the core concepts and advanced techniques in this subject.'}
+                  </p>
+                  
+                  <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
+                    <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">
+                      {subject.modules.length} Lessons
+                    </span>
+                    <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 group-hover:text-indigo-600 uppercase tracking-widest transition-colors">
+                      View Subject <ChevronRight size={14} />
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -1345,8 +1362,12 @@ const SortableSubjectCard = ({ subject, index, onEdit, onDelete }: any) => {
           <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-2 text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
             <GripVertical size={22} />
           </div>
-          <div className="h-12 w-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-700">
-            <BookOpen size={24} />
+          <div className="h-12 w-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-700 overflow-hidden shadow-inner">
+            {subject.imageUrl ? (
+              <img src={subject.imageUrl} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+            ) : (
+              <BookOpen size={24} />
+            )}
           </div>
           <div>
             <h4 className="text-lg font-black text-slate-900 group-hover:text-indigo-600 transition-colors duration-300">{subject.title || 'Untitled Subject'}</h4>
@@ -1808,6 +1829,22 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                               placeholder="Brief overview of this subject..."
                             />
                             <FileText className="absolute left-4 top-4 text-slate-300" size={16} />
+                          </div>
+                        </div>
+                        <div className="group">
+                          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 group-focus-within:text-indigo-600 transition-colors">Subject Image URL</label>
+                          <div className="relative">
+                            <input 
+                              value={editingCourse.subjects[editingSubjectIndex].imageUrl || ''}
+                              onChange={e => {
+                                const newSubjects = [...editingCourse.subjects];
+                                newSubjects[editingSubjectIndex].imageUrl = e.target.value;
+                                setEditingCourse({ ...editingCourse, subjects: newSubjects });
+                              }}
+                              className="w-full rounded-xl border border-slate-100 p-3.5 pl-11 text-sm font-bold outline-none focus:border-indigo-500/30 bg-white transition-all shadow-sm focus:shadow-md"
+                              placeholder="Link to subject thumbnail image..."
+                            />
+                            <Image className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                           </div>
                         </div>
                       </div>

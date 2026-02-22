@@ -13,6 +13,7 @@ export interface Subject {
   id: string;
   title: string;
   description: string;
+  imageUrl?: string;
   modules: CourseModule[];
 }
 
