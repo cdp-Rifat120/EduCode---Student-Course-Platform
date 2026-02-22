@@ -9,6 +9,13 @@ export interface CourseModule {
   contentDescription: string;
 }
 
+export interface Subject {
+  id: string;
+  title: string;
+  description: string;
+  modules: CourseModule[];
+}
+
 export interface Course {
   id: string;
   title: string;
@@ -19,5 +26,5 @@ export interface Course {
   language: string;
   content: string;
   routineUrl: string;
-  modules: CourseModule[];
+  subjects: Subject[];
 }

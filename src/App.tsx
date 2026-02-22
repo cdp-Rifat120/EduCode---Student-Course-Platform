@@ -18,6 +18,7 @@ import {
   ChevronRight, 
   ArrowLeft, 
   Search,
+  Type,
   Layout,
   Cpu,
   Palette,
@@ -195,8 +196,10 @@ const Navbar = ({ isAdmin, onLogout }: { isAdmin: boolean; onLogout: () => void 
 
 const CourseCard = ({ course }: { course: Course }) => {
   const navigate = useNavigate();
+  const totalLessons = (course.subjects || []).reduce((acc, subject) => acc + (subject.modules?.length || 0), 0);
+
   return (
-    <motion.div
+    <motion.div 
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -219,7 +222,7 @@ const CourseCard = ({ course }: { course: Course }) => {
         <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
           <div className="flex items-center gap-2 text-white text-[10px] sm:text-xs font-medium">
             <BookOpen size={12} className="sm:w-3.5 sm:h-3.5" />
-            <span>{course.modules.length} Lessons</span>
+            <span>{totalLessons} Lessons</span>
           </div>
         </div>
       </div>
@@ -264,9 +267,12 @@ const HomePage = ({ courses }: { courses: Course[] }) => {
   const filteredCourses = courses.filter(course => 
     course.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
     course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    course.modules.some(m => 
-      (m.contentTitle && m.contentTitle.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (m.contentDescription && m.contentDescription.toLowerCase().includes(searchQuery.toLowerCase()))
+    (course.subjects || []).some(subject => 
+      subject.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      subject.modules.some(m => 
+        (m.contentTitle && m.contentTitle.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (m.contentDescription && m.contentDescription.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
     )
   );
 
@@ -768,77 +774,154 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const course = courses.find(c => c.id === id);
+  
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [moduleSearch, setModuleSearch] = useState('');
 
+  const selectedSubject = course?.subjects?.find(s => s.id === selectedSubjectId);
+  const activeModule = selectedSubject?.modules?.find(m => m.id === activeModuleId);
+
   useEffect(() => {
-    if (course && course.modules.length > 0 && !activeModuleId) {
-      setActiveModuleId(course.modules[0].id);
+    if (selectedSubject && selectedSubject.modules.length > 0 && !activeModuleId) {
+      setActiveModuleId(selectedSubject.modules[0].id);
     }
-  }, [course, activeModuleId]);
+  }, [selectedSubject, activeModuleId]);
 
   if (!course) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <div className="h-20 w-20 rounded-3xl bg-slate-50 flex items-center justify-center text-slate-300 mb-2">
-          <Search size={40} />
-        </div>
-        <h2 className="text-2xl font-bold text-slate-900">Course Not Found</h2>
-        <button 
-          onClick={() => navigate('/')}
-          className="flex items-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-bold text-white transition-all hover:bg-slate-800 active:scale-95"
-        >
-          <ArrowLeft size={18} /> Back to Home
-        </button>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-950 text-white">
+        <ShieldAlert size={60} className="text-indigo-500 mb-4" />
+        <h2 className="text-3xl font-black tracking-tight">Access Denied</h2>
+        <p className="text-slate-400 font-medium">This course does not exist or has been restricted.</p>
       </div>
     );
   }
 
-  const filteredModules = course.modules.filter(m => 
+  // --- Subject List View ---
+  if (!selectedSubjectId) {
+    return (
+      <div className="min-h-screen bg-slate-50 selection:bg-indigo-100 selection:text-indigo-900">
+        <div className="mx-auto max-w-7xl px-4 sm:px-8 py-12 sm:py-20 lg:px-10">
+          <header className="mb-12 sm:mb-20">
+            <div className="inline-flex items-center gap-2 mb-4 rounded-full bg-indigo-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 border border-indigo-100/50">
+              Course Subjects
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-4">{course.title}</h1>
+            <p className="text-base sm:text-xl text-slate-500 font-medium max-w-2xl leading-relaxed">
+              Select a subject below to view its curriculum and start learning.
+            </p>
+          </header>
+
+          <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {(course.subjects || []).map((subject, idx) => (
+              <motion.div
+                key={subject.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                onClick={() => setSelectedSubjectId(subject.id)}
+                className="group relative flex flex-col bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(79,70,229,0.1)] transition-all duration-500 cursor-pointer overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-indigo-500/10 transition-colors" />
+                
+                <div className="h-14 w-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-sm">
+                  <BookOpen size={28} />
+                </div>
+                
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">{subject.title}</h3>
+                <p className="text-sm text-slate-500 font-medium leading-relaxed mb-8 line-clamp-2">
+                  {subject.description || 'Explore the core concepts and advanced techniques in this subject.'}
+                </p>
+                
+                <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
+                  <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">
+                    {subject.modules.length} Lessons
+                  </span>
+                  <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 group-hover:text-indigo-600 uppercase tracking-widest transition-colors">
+                    View Subject <ChevronRight size={14} />
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {(!course.subjects || course.subjects.length === 0) && (
+            <div className="text-center py-32 bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
+              <div className="bg-slate-50 rounded-3xl w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                <Layout size={40} className="text-slate-200" />
+              </div>
+              <p className="text-slate-400 font-bold text-lg">No subjects available yet</p>
+              <p className="text-slate-300 text-sm mt-1">Check back later for updates.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // --- Subject Detail View (Lessons) ---
+  const filteredModules = selectedSubject.modules.filter(m => 
     (m.contentTitle && m.contentTitle.toLowerCase().includes(moduleSearch.toLowerCase())) ||
     (m.contentDescription && m.contentDescription.toLowerCase().includes(moduleSearch.toLowerCase()))
   );
 
-  const activeModule = course.modules.find(m => m.id === activeModuleId) || course.modules[0];
-  const activeIndex = course.modules.findIndex(m => m.id === activeModuleId);
+  const activeModuleData = selectedSubject.modules.find(m => m.id === activeModuleId) || selectedSubject.modules[0];
+  const activeIndex = selectedSubject.modules.findIndex(m => m.id === activeModuleId);
 
   const handleNextLesson = () => {
-    if (activeIndex < course.modules.length - 1) {
-      setActiveModuleId(course.modules[activeIndex + 1].id);
+    if (activeIndex < selectedSubject.modules.length - 1) {
+      setActiveModuleId(selectedSubject.modules[activeIndex + 1].id);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      navigate('#');
+      setSelectedSubjectId(null);
+      setActiveModuleId(null);
     }
   };
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-white">
-      {/* Mobile Sidebar Toggle */}
-      <div className="lg:hidden sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-100 px-4 py-3 flex items-center justify-between shadow-sm">
-        <button 
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="flex items-center gap-2 text-slate-900 font-bold text-xs bg-slate-100/50 px-4 py-2.5 rounded-2xl active:scale-95 transition-all"
-        >
-          {isSidebarOpen ? <X size={16} /> : <Menu size={16} />}
-          <span>Course Menu</span>
-        </button>
-        <div className="flex flex-col items-end">
-          <span className="text-[9px] font-bold text-indigo-600 uppercase tracking-[0.2em] leading-none mb-1">Learning</span>
-          <span className="text-xs font-bold text-slate-900 truncate max-w-[140px]">{course.title}</span>
+      {/* Mobile Header & Breadcrumbs */}
+      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-100 px-4 py-3 flex flex-col gap-2 shadow-sm lg:hidden">
+        <div className="flex items-center justify-between">
+          <button 
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="flex items-center gap-2 text-slate-900 font-bold text-xs bg-slate-100/50 px-4 py-2.5 rounded-2xl active:scale-95 transition-all"
+          >
+            {isSidebarOpen ? <X size={16} /> : <Menu size={16} />}
+            <span>Lessons</span>
+          </button>
+          <button 
+            onClick={() => { setSelectedSubjectId(null); setActiveModuleId(null); }}
+            className="text-[10px] font-black text-indigo-600 uppercase tracking-widest flex items-center gap-1"
+          >
+            <ArrowLeft size={12} /> Back
+          </button>
+        </div>
+        <div className="flex items-center gap-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest overflow-hidden">
+          <span className="truncate max-w-[100px]">{selectedSubject.title}</span>
+          <ChevronRight size={10} />
+          <span className="text-indigo-600 truncate">{activeModuleData?.contentTitle}</span>
         </div>
       </div>
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-full sm:w-80 bg-white border-r border-slate-100 transform transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] lg:relative lg:translate-x-0 lg:z-0
+        fixed inset-y-0 left-0 z-50 w-full sm:w-85 bg-white border-r border-slate-100 transform transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] lg:relative lg:translate-x-0 lg:z-0
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="p-6 sm:p-8 border-b border-slate-50">
           <div className="flex items-center justify-between mb-6 sm:mb-8">
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Curriculum</h2>
-              <p className="text-[10px] sm:text-xs font-medium text-slate-400 mt-1">{course.modules.length} lessons to complete</p>
+              <button 
+                onClick={() => { setSelectedSubjectId(null); setActiveModuleId(null); }}
+                className="flex items-center gap-2 text-[10px] font-black text-slate-400 hover:text-indigo-600 transition-all uppercase tracking-[0.2em] mb-4"
+              >
+                <ArrowLeft size={14} /> Back to Subjects
+              </button>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight line-clamp-1">{selectedSubject.title}</h2>
+              <p className="text-[10px] sm:text-xs font-bold text-indigo-600 uppercase tracking-widest mt-1.5">{selectedSubject.modules.length} Lessons Available</p>
             </div>
             <button 
               className="lg:hidden p-2 hover:bg-slate-50 rounded-xl transition-colors" 
@@ -851,14 +934,14 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={16} />
             <input 
               type="text" 
-              placeholder="Find a lesson..." 
+              placeholder="Search lessons..." 
               value={moduleSearch}
               onChange={(e) => setModuleSearch(e.target.value)}
-              className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 py-3 sm:py-3.5 pl-11 pr-4 text-sm outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all placeholder:text-slate-400"
+              className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 py-3 sm:py-3.5 pl-11 pr-4 text-sm font-bold outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all placeholder:text-slate-400"
             />
           </div>
         </div>
-        <nav className="p-3 sm:p-4 space-y-1.5 sm:space-y-2 overflow-y-auto h-[calc(100vh-180px)] sm:h-[calc(100vh-220px)] custom-scrollbar">
+        <nav className="p-3 sm:p-4 space-y-2 overflow-y-auto h-[calc(100vh-220px)] sm:h-[calc(100vh-260px)] custom-scrollbar">
           {filteredModules.map((module, index) => (
             <button
               key={module.id}
@@ -867,25 +950,25 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
                 setIsSidebarOpen(false);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`w-full flex items-start gap-4 p-4 rounded-[1.5rem] text-left transition-all duration-300 group ${
+              className={`w-full flex items-start gap-4 p-4 rounded-[1.75rem] text-left transition-all duration-300 group ${
                 activeModuleId === module.id 
-                  ? 'bg-indigo-600 text-white shadow-[0_10px_25px_rgba(79,70,229,0.2)]' 
+                  ? 'bg-indigo-600 text-white shadow-[0_15px_35px_rgba(79,70,229,0.25)]' 
                   : 'text-slate-600 hover:bg-slate-50 active:scale-[0.98]'
               }`}
             >
-              <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl text-[11px] font-bold border transition-colors ${
+              <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-[11px] font-black border transition-colors ${
                 activeModuleId === module.id 
                   ? 'bg-white/20 border-white/30 text-white' 
-                  : 'bg-white border-slate-100 text-slate-400 group-hover:border-indigo-200 group-hover:text-indigo-600'
+                  : 'bg-white border-slate-100 text-slate-400 group-hover:border-indigo-200 group-hover:text-indigo-600 shadow-sm'
               }`}>
                 {(index + 1).toString().padStart(2, '0')}
               </div>
               <div className="flex-grow min-w-0">
-                <p className={`text-sm font-bold leading-tight mb-1.5 ${activeModuleId === module.id ? 'text-white' : 'text-slate-900'}`}>
+                <p className={`text-sm font-black leading-tight mb-1.5 line-clamp-2 ${activeModuleId === module.id ? 'text-white' : 'text-slate-900'}`}>
                   {module.contentTitle}
                 </p>
                 <div className={`flex items-center gap-3 ${activeModuleId === module.id ? 'text-white/70' : 'text-slate-400'}`}>
-                  <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider">
+                  <div className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest">
                     <PlayCircle size={12} />
                     <span>Video</span>
                   </div>
@@ -893,7 +976,7 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
                     <div className="h-1 w-1 rounded-full bg-white/40" />
                   )}
                   {activeModuleId === module.id && (
-                    <span className="text-[10px] font-bold uppercase tracking-wider">Now Playing</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest">Watching</span>
                   )}
                 </div>
               </div>
@@ -904,8 +987,7 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
               <div className="bg-slate-50 rounded-3xl w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <Search size={24} className="text-slate-200" />
               </div>
-              <p className="text-sm font-bold text-slate-400">No results found</p>
-              <p className="text-xs text-slate-300 mt-1">Try a different keyword</p>
+              <p className="text-sm font-bold text-slate-400">No lessons found</p>
             </div>
           )}
         </nav>
@@ -914,69 +996,78 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
       {/* Main Content */}
       <main className="flex-grow bg-slate-50/20 overflow-y-auto h-screen custom-scrollbar">
         <div className="max-w-5xl mx-auto px-4 py-6 sm:py-12 sm:px-8 lg:px-12">
+          {/* Desktop Breadcrumbs */}
+          <div className="hidden lg:flex items-center gap-3 mb-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+            <span className="hover:text-indigo-600 cursor-pointer transition-colors" onClick={() => setSelectedSubjectId(null)}>{selectedSubject.title}</span>
+            <ChevronRight size={14} className="opacity-30" />
+            <span className="text-indigo-600">{activeModuleData?.contentTitle}</span>
+          </div>
+
           {/* Video Player Container */}
-          <div className="relative group mb-6 sm:mb-10">
-            <div className="absolute -inset-2 sm:-inset-4 bg-indigo-500/5 rounded-2xl sm:rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-            <div className="relative w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-slate-900 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.2)] sm:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] ring-1 ring-white/10">
-              <YouTubePlayer videoUrl={activeModule.videoUrl} title={activeModule.contentTitle} />
+          <div className="relative group mb-8 sm:mb-12">
+            <div className="absolute -inset-2 sm:-inset-6 bg-indigo-500/5 rounded-[2.5rem] sm:rounded-[3.5rem] blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            <div className="relative w-full rounded-2xl sm:rounded-[3rem] overflow-hidden bg-slate-900 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.3)] ring-1 ring-white/10">
+              {activeModuleData && <YouTubePlayer videoUrl={activeModuleData.videoUrl} title={activeModuleData.contentTitle} />}
             </div>
           </div>
 
           {/* Header Info */}
-          <div className="mb-8 sm:mb-12">
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-              <span className="bg-indigo-50 text-indigo-600 text-[9px] sm:text-[10px] font-bold px-3 sm:px-4 py-1 sm:py-1.5 rounded-full uppercase tracking-[0.15em] border border-indigo-100/50">
-                Module {(activeIndex + 1).toString().padStart(2, '0')}
+          <div className="mb-10 sm:mb-16">
+            <div className="flex flex-wrap items-center gap-3 mb-6 sm:mb-8">
+              <span className="bg-indigo-50 text-indigo-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-[0.2em] border border-indigo-100/50 shadow-sm">
+                Lesson {(activeIndex + 1).toString().padStart(2, '0')}
               </span>
-              <div className="h-1 w-1 rounded-full bg-slate-200" />
-              <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">
+              <div className="h-1.5 w-1.5 rounded-full bg-slate-200" />
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                 {course.instructor}
               </span>
             </div>
-            <h1 className="text-xl sm:text-4xl font-black text-slate-900 mb-3 sm:mb-4 tracking-tight leading-tight">{activeModule.contentTitle}</h1>
-            <p className="text-sm sm:text-lg text-slate-600 leading-relaxed max-w-2xl font-medium mb-6 sm:mb-8">
-              {activeModule.contentDescription}
+            <h1 className="text-2xl sm:text-5xl font-black text-slate-900 mb-4 sm:mb-6 tracking-tight leading-tight">{activeModuleData?.contentTitle}</h1>
+            <p className="text-base sm:text-xl text-slate-600 leading-relaxed max-w-3xl font-medium">
+              {activeModuleData?.contentDescription}
             </p>
           </div>
 
           {/* Resources Grid */}
-          <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 mb-10 sm:mb-16">
+          <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 mb-12 sm:mb-20">
             <ResourceCard 
               title="Lecture Notes" 
               subtitle="Comprehensive PDF guide" 
-              icon={<FileText size={20} className="sm:w-6 sm:h-6" />} 
-              url={activeModule.pdfUrl}
+              icon={<FileText size={24} />} 
+              url={activeModuleData?.pdfUrl || ''}
               color="red"
             />
             <ResourceCard 
               title="Practice Sheet" 
               subtitle="Test your understanding" 
-              icon={<Layout size={20} className="sm:w-6 sm:h-6" />} 
-              url={activeModule.practiceSheetUrl}
+              icon={<Layout size={24} />} 
+              url={activeModuleData?.practiceSheetUrl || ''}
               color="emerald"
             />
           </div>
 
           {/* Footer Navigation */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 pt-8 sm:pt-12 border-t border-slate-100">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-10 sm:pt-16 border-t border-slate-100">
             <button 
               onClick={() => window.open(course.routineUrl, '_blank')}
-              className="w-full sm:w-auto group flex items-center justify-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-all active:scale-95"
+              className="w-full sm:w-auto group flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-slate-100 text-slate-600 font-black hover:bg-slate-200 transition-all active:scale-95"
             >
-              <Calendar size={18} className="group-hover:rotate-12 transition-transform" />
-              <span className="text-sm sm:text-base">View Full Routine</span>
+              <Calendar size={20} className="group-hover:rotate-12 transition-transform" />
+              <span className="text-sm sm:text-base uppercase tracking-widest">Full Routine</span>
               <ExternalLink size={14} className="opacity-40" />
             </button>
 
             <button 
               onClick={handleNextLesson}
-              className="w-full sm:w-auto group flex items-center justify-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 hover:shadow-indigo-200 active:scale-95"
+              className="w-full sm:w-auto group flex items-center justify-center gap-4 px-10 py-4.5 rounded-2xl bg-indigo-600 text-white font-black hover:bg-indigo-700 transition-all shadow-2xl shadow-indigo-200 active:scale-95"
             >
-              <span className="text-sm sm:text-base">{activeIndex < course.modules.length - 1 ? 'Next Lesson' : 'Finish Course'}</span>
-              {activeIndex < course.modules.length - 1 ? (
-                <ChevronRight size={18} className="sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+              <span className="text-sm sm:text-base uppercase tracking-widest">
+                {activeIndex < selectedSubject.modules.length - 1 ? 'Next Lesson' : 'Back to Subjects'}
+              </span>
+              {activeIndex < selectedSubject.modules.length - 1 ? (
+                <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
               ) : (
-                <ArrowLeft size={18} className="sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform" />
+                <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
               )}
             </button>
           </div>
@@ -1158,26 +1249,26 @@ const SortableModuleCard = ({ module, index, onEdit, onDelete }: {
     <div 
       ref={setNodeRef}
       style={style}
-      className={`group relative rounded-2xl sm:rounded-3xl border border-slate-100 bg-white p-4 sm:p-6 transition-all duration-300 cursor-pointer ${
-        isDragging ? 'shadow-2xl border-indigo-200 ring-4 ring-indigo-500/5' : 'shadow-sm hover:shadow-xl hover:border-indigo-100'
+      className={`group relative rounded-[2rem] border border-slate-100 bg-white p-5 sm:p-7 transition-all duration-500 cursor-pointer ${
+        isDragging ? 'shadow-2xl border-indigo-200 ring-8 ring-indigo-500/5' : 'shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(79,70,229,0.08)] hover:border-indigo-100'
       }`}
       onClick={onEdit}
     >
-      <div className="flex items-start justify-between mb-4 sm:mb-5">
-        <div className="flex items-center gap-3 sm:gap-4">
+      <div className="flex items-start justify-between mb-5">
+        <div className="flex items-center gap-4">
           <div 
             {...attributes} 
             {...listeners}
-            className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg sm:rounded-xl text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 cursor-grab active:cursor-grabbing transition-all"
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 cursor-grab active:cursor-grabbing transition-all"
             onClick={(e) => e.stopPropagation()}
           >
-            <GripVertical size={18} className="sm:w-5 sm:h-5" />
+            <GripVertical size={20} />
           </div>
           <div className="relative">
-            <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl sm:rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-inner">
-              <PlayCircle size={20} className="sm:w-6 sm:h-6" />
+            <div className="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-700 shadow-inner">
+              <PlayCircle size={24} />
             </div>
-            <div className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-slate-900 text-white text-[9px] sm:text-[10px] font-black flex items-center justify-center border-2 border-white shadow-sm">
+            <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-slate-900 text-white text-[10px] font-black flex items-center justify-center border-2 border-white shadow-md">
               {index + 1}
             </div>
           </div>
@@ -1187,38 +1278,121 @@ const SortableModuleCard = ({ module, index, onEdit, onDelete }: {
             e.stopPropagation();
             onDelete(e);
           }}
-          className="h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-lg sm:rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all"
+          className="h-10 w-10 flex items-center justify-center rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all"
         >
-          <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
+          <Trash2 size={18} />
         </button>
       </div>
-      <div className="space-y-1 sm:space-y-2">
-        <h4 className="text-base sm:text-lg font-black text-slate-900 line-clamp-1 group-hover:text-indigo-600 transition-colors">
+      <div className="space-y-2">
+        <h4 className="text-lg font-black text-slate-900 line-clamp-1 group-hover:text-indigo-600 transition-colors duration-300">
           {module.contentTitle || 'Untitled Lesson'}
         </h4>
-        <p className="text-xs sm:text-sm text-slate-500 line-clamp-2 font-medium leading-relaxed">
+        <p className="text-sm text-slate-500 line-clamp-2 font-medium leading-relaxed opacity-80">
           {module.contentDescription || 'No description provided for this module.'}
         </p>
       </div>
-      <div className="mt-4 sm:mt-6 pt-4 sm:pt-5 border-t border-slate-50 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-[9px] sm:text-[10px] font-black text-indigo-600 uppercase tracking-widest">
-          <Edit size={12} className="sm:w-3.5 sm:h-3.5" />
-          <span>Edit Details</span>
+      <div className="mt-6 pt-5 border-t border-slate-50 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-[10px] font-black text-indigo-600 uppercase tracking-widest">
+          <Edit size={14} />
+          <span>Refine Lesson</span>
         </div>
-        {module.videoUrl && (
-          <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold text-slate-400">
-            <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            <span>Video Ready</span>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          {module.videoUrl && (
+            <div className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
+              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Video</span>
+            </div>
+          )}
+          {module.pdfUrl && (
+            <div className="flex items-center gap-1.5 text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">
+              <FileText size={10} />
+              <span>PDF</span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
+const SortableSubjectCard = ({ subject, index, onEdit, onDelete }: any) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: subject.id });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : 0,
+    position: 'relative' as const,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style}
+      className={`group relative bg-white p-6 sm:p-8 rounded-[2.5rem] border border-slate-100 transition-all duration-500 ${
+        isDragging ? 'shadow-2xl border-indigo-200 ring-8 ring-indigo-500/5' : 'shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(79,70,229,0.1)]'
+      }`}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-4">
+          <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-2 text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
+            <GripVertical size={22} />
+          </div>
+          <div className="h-12 w-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-700">
+            <BookOpen size={24} />
+          </div>
+          <div>
+            <h4 className="text-lg font-black text-slate-900 group-hover:text-indigo-600 transition-colors duration-300">{subject.title || 'Untitled Subject'}</h4>
+            <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mt-0.5">{subject.modules.length} Lessons</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={onEdit}
+            className="h-10 w-10 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+          >
+            <Edit size={18} />
+          </button>
+          <button 
+            onClick={onDelete}
+            className="h-10 w-10 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+          >
+            <Trash2 size={18} />
+          </button>
+        </div>
+      </div>
+      <p className="text-sm text-slate-500 font-medium line-clamp-2 mb-6 ml-14 opacity-80 leading-relaxed">{subject.description || 'Explore the core concepts and advanced techniques in this subject.'}</p>
+      <div className="flex items-center justify-between pt-5 border-t border-slate-50 ml-14">
+        <div className="flex -space-x-2">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-6 w-6 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[8px] font-black text-slate-400">
+              {i}
+            </div>
+          ))}
+        </div>
+        <button 
+          onClick={onEdit}
+          className="text-[10px] font-black text-slate-400 hover:text-indigo-600 uppercase tracking-widest flex items-center gap-2 group/btn transition-all"
+        >
+          Manage Curriculum <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => void }) => {
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [editingSubjectIndex, setEditingSubjectIndex] = useState<number | null>(null);
   const [editingModuleIndex, setEditingModuleIndex] = useState<number | null>(null);
   const navigate = useNavigate();
 
@@ -1236,12 +1410,29 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
-    if (editingCourse && over && active.id !== over.id) {
-      const oldIndex = editingCourse.modules.findIndex(m => m.id === active.id);
-      const newIndex = editingCourse.modules.findIndex(m => m.id === over.id);
+    if (!editingCourse || !over || active.id === over.id) return;
+
+    if (editingSubjectIndex !== null) {
+      // Reordering modules within a subject
+      const currentSubject = editingCourse.subjects[editingSubjectIndex];
+      const oldIndex = currentSubject.modules.findIndex(m => m.id === active.id);
+      const newIndex = currentSubject.modules.findIndex(m => m.id === over.id);
       
-      const newModules = arrayMove(editingCourse.modules, oldIndex, newIndex);
-      setEditingCourse({ ...editingCourse, modules: newModules });
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newModules = arrayMove(currentSubject.modules, oldIndex, newIndex);
+        const newSubjects = [...editingCourse.subjects];
+        newSubjects[editingSubjectIndex] = { ...currentSubject, modules: newModules };
+        setEditingCourse({ ...editingCourse, subjects: newSubjects });
+      }
+    } else {
+      // Reordering subjects within a course
+      const oldIndex = editingCourse.subjects.findIndex(s => s.id === active.id);
+      const newIndex = editingCourse.subjects.findIndex(s => s.id === over.id);
+      
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newSubjects = arrayMove(editingCourse.subjects, oldIndex, newIndex);
+        setEditingCourse({ ...editingCourse, subjects: newSubjects });
+      }
     }
   };
 
@@ -1262,6 +1453,7 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
     }
     
     setEditingCourse(null);
+    setEditingSubjectIndex(null);
     setEditingModuleIndex(null);
     setIsAdding(false);
     onUpdate();
@@ -1269,15 +1461,12 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
 
   const filteredCourses = courses.filter(course => 
     course.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    course.modules.some(m => 
-      (m.contentTitle && m.contentTitle.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (m.contentDescription && m.contentDescription.toLowerCase().includes(searchQuery.toLowerCase()))
-    )
+    course.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-8 py-8 sm:py-16 lg:px-10">
+    <>
+      <div className="mx-auto max-w-7xl px-4 sm:px-8 py-8 sm:py-16 lg:px-10">
       <div className="mb-10 sm:mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-6 sm:gap-8">
         <div>
           <div className="inline-flex items-center gap-2 mb-3 sm:mb-4 rounded-full bg-indigo-50 px-3 sm:px-4 py-1 sm:py-1.5 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 border border-indigo-100/50">
@@ -1310,7 +1499,7 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                 language: 'javascript',
                 content: '',
                 routineUrl: '',
-                modules: []
+                subjects: []
               });
             }}
             className="flex items-center justify-center gap-2 sm:gap-3 rounded-xl sm:rounded-[1.5rem] bg-indigo-600 px-6 sm:px-8 py-3.5 sm:py-4 font-black text-white shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] transition-all hover:bg-indigo-700 active:scale-95 text-sm sm:text-base"
@@ -1321,32 +1510,41 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
         </div>
       </div>
 
-      <div className="grid gap-4 sm:gap-6">
+      <div className="grid gap-6">
         {filteredCourses.map(course => (
-          <div key={course.id} className="group flex flex-col sm:flex-row sm:items-center justify-between rounded-2xl sm:rounded-[2rem] border border-slate-100 bg-white p-5 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-500">
-            <div className="flex items-center gap-4 sm:gap-6 mb-5 sm:mb-0">
-              <div className="h-12 w-12 sm:h-16 sm:w-16 shrink-0 rounded-xl sm:rounded-[1.25rem] bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform duration-500">
-                <BookOpen size={24} className="sm:w-7 sm:h-7" />
+          <div key={course.id} className="group relative flex flex-col sm:flex-row sm:items-center justify-between rounded-[2.5rem] border border-slate-100 bg-white p-6 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_40px_80px_rgba(79,70,229,0.1)] transition-all duration-700 overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl -mr-32 -mt-32 group-hover:bg-indigo-500/10 transition-colors duration-700" />
+            
+            <div className="relative flex items-center gap-5 sm:gap-8 mb-6 sm:mb-0">
+              <div className="h-16 w-16 sm:h-20 sm:w-20 shrink-0 rounded-[1.5rem] sm:rounded-[2rem] bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-700 shadow-inner">
+                <BookOpen size={28} className="sm:w-9 sm:h-9" />
               </div>
               <div className="min-w-0">
-                <div className="flex items-center gap-2 mb-1 sm:mb-1.5">
-                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">{course.category}</span>
-                  <span className="text-[9px] sm:text-[10px] font-bold text-slate-300 uppercase tracking-widest">• {course.modules.length} Lessons</span>
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-100/50">{course.category}</span>
+                  <div className="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    <Layout size={12} />
+                    <span>{course.subjects?.length || 0} Subjects</span>
+                  </div>
                 </div>
-                <h3 className="text-lg sm:text-xl font-black text-slate-900 truncate group-hover:text-indigo-600 transition-colors">{course.title}</h3>
-                <p className="text-xs sm:text-sm text-slate-400 font-medium mt-0.5 sm:mt-1">Instructor: {course.instructor}</p>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 truncate group-hover:text-indigo-600 transition-colors duration-300">{course.title}</h3>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <User size={14} className="text-slate-300" />
+                  <p className="text-sm text-slate-400 font-bold">Instructor: <span className="text-slate-600">{course.instructor}</span></p>
+                </div>
               </div>
             </div>
-            <div className="flex flex-wrap items-center justify-start sm:justify-end gap-2 sm:gap-3 border-t sm:border-t-0 pt-4 sm:pt-0">
+            
+            <div className="relative flex flex-wrap items-center justify-start sm:justify-end gap-3 border-t sm:border-t-0 pt-6 sm:pt-0">
               <button 
                 onClick={() => {
                   setIsAdding(false);
                   setEditingCourse(course);
                 }}
-                className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-slate-600 bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 transition-all font-bold text-xs sm:text-sm"
+                className="flex items-center gap-2 px-6 py-3.5 rounded-2xl text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all duration-500 font-black text-xs uppercase tracking-widest shadow-sm hover:shadow-lg hover:shadow-indigo-200 active:scale-95"
               >
-                <Edit size={16} className="sm:w-[18px] sm:h-[18px]" />
-                <span>Edit</span>
+                <Edit size={16} />
+                <span>Refine Course</span>
               </button>
               <button 
                 onClick={async () => {
@@ -1360,22 +1558,15 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                     }
                   }
                 }}
-                className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-red-600 bg-red-50 hover:bg-red-100 transition-all font-bold text-xs sm:text-sm"
+                className="flex items-center justify-center h-12 w-12 rounded-2xl text-red-400 bg-red-50 hover:bg-red-500 hover:text-white transition-all duration-500 active:scale-95"
               >
-                <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
-                <span>Delete</span>
-              </button>
-              <button 
-                onClick={() => navigate(`/${course.id}`)} 
-                className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-white bg-slate-900 hover:bg-indigo-600 transition-all font-bold text-xs sm:text-sm cursor-pointer shadow-lg shadow-slate-100"
-              >
-                <ExternalLink size={16} className="sm:w-[18px] sm:h-[18px]" />
-                <span>View</span>
+                <Trash2 size={20} />
               </button>
             </div>
           </div>
         ))}
-        {courses.length === 0 && (
+      </div>
+      {courses.length === 0 && (
           <div className="text-center py-32 bg-slate-50/50 rounded-[3rem] border-2 border-dashed border-slate-200">
             <div className="bg-white rounded-3xl w-20 h-20 flex items-center justify-center mx-auto mb-6 shadow-sm">
               <BookOpen size={40} className="text-slate-200" />
@@ -1443,24 +1634,30 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                       </div>
                       <div className="group">
                         <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Course Title</label>
-                        <input 
-                          type="text" 
-                          value={editingCourse.title}
-                          onChange={e => setEditingCourse({...editingCourse, title: e.target.value})}
-                          className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-sm sm:text-base text-slate-900"
-                          placeholder="Enter a compelling title"
-                        />
+                        <div className="relative">
+                          <input 
+                            type="text" 
+                            value={editingCourse.title}
+                            onChange={e => setEditingCourse({...editingCourse, title: e.target.value})}
+                            className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 pl-11 sm:pl-12 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-sm sm:text-base text-slate-900"
+                            placeholder="Enter a compelling title"
+                          />
+                          <Type className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 sm:w-[18px] sm:h-[18px]" size={16} />
+                        </div>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="group">
                           <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Instructor</label>
-                          <input 
-                            type="text" 
-                            value={editingCourse.instructor}
-                            onChange={e => setEditingCourse({...editingCourse, instructor: e.target.value})}
-                            className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-sm sm:text-base text-slate-900"
-                            placeholder="Instructor name"
-                          />
+                          <div className="relative">
+                            <input 
+                              type="text" 
+                              value={editingCourse.instructor}
+                              onChange={e => setEditingCourse({...editingCourse, instructor: e.target.value})}
+                              className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 pl-11 sm:pl-12 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-sm sm:text-base text-slate-900"
+                              placeholder="Instructor name"
+                            />
+                            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 sm:w-[18px] sm:h-[18px]" size={16} />
+                          </div>
                         </div>
                         <div className="group">
                           <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Category</label>
@@ -1468,13 +1665,14 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                             <select 
                               value={editingCourse.category}
                               onChange={e => setEditingCourse({...editingCourse, category: e.target.value})}
-                              className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all appearance-none font-bold text-sm sm:text-base text-slate-900"
+                              className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 pl-11 sm:pl-12 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all appearance-none font-bold text-sm sm:text-base text-slate-900"
                             >
                               <option>Skill Development</option>
                               <option>Academic</option>
                               <option>Admission</option>
                               <option>Jobs</option>
                             </select>
+                            <Layout className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 sm:w-[18px] sm:h-[18px]" size={16} />
                             <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 rotate-90" size={18} />
                           </div>
                         </div>
@@ -1488,16 +1686,6 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                       <h3 className="text-[10px] sm:text-xs font-black text-slate-900 uppercase tracking-[0.2em]">Resources & Details</h3>
                     </div>
                     <div className="space-y-5 sm:space-y-6">
-                      <div className="group">
-                        <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Course Overview</label>
-                        <textarea 
-                          rows={3}
-                          value={editingCourse.description}
-                          onChange={e => setEditingCourse({...editingCourse, description: e.target.value})}
-                          className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all resize-none font-bold text-sm sm:text-base text-slate-900"
-                          placeholder="What will students learn?"
-                        />
-                      </div>
                       <div className="group">
                         <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Routine URL</label>
                         <div className="relative">
@@ -1515,199 +1703,286 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                   </section>
                 </div>
 
-                {/* Right Column: Module Management */}
+                {/* Right Column: Subject & Module Management */}
                 <div className="bg-slate-50/50 rounded-2xl sm:rounded-[2.5rem] p-6 sm:p-10 border border-slate-100 flex flex-col min-h-[400px] sm:min-h-[500px]">
-                  <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-4 mb-8 shrink-0">
-                    <div>
-                      <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Curriculum Builder</h3>
-                      <p className="text-[10px] sm:text-sm text-slate-400 font-bold mt-1 uppercase tracking-widest">
-                        {editingCourse.modules.length} Lessons Configured
-                      </p>
-                    </div>
-                    {editingModuleIndex === null && (
-                      <button 
-                        onClick={() => {
-                          const newModule = { id: Math.random().toString(36).substr(2, 9), title: '', description: '', videoUrl: '', pdfUrl: '', practiceSheetUrl: '', contentTitle: '', contentDescription: '' };
-                          const newModules = [...editingCourse.modules, newModule];
-                          setEditingCourse({ ...editingCourse, modules: newModules });
-                          setEditingModuleIndex(newModules.length - 1);
-                        }}
-                        className="w-full xs:w-auto flex items-center justify-center gap-2 text-[10px] sm:text-xs font-black text-white bg-indigo-600 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl hover:bg-indigo-700 transition-all active:scale-95 shadow-lg shadow-indigo-100"
-                      >
-                        <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
-                        Add Lesson
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="flex-grow">
-                    {editingModuleIndex === null ? (
-                      <DndContext 
-                        sensors={sensors}
-                        collisionDetection={closestCenter}
-                        onDragEnd={handleDragEnd}
-                      >
-                        <SortableContext 
-                          items={editingCourse.modules.map(m => m.id)}
-                          strategy={verticalListSortingStrategy}
+                  {editingSubjectIndex === null ? (
+                    // --- Subject List View ---
+                    <>
+                      <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-4 mb-8 shrink-0">
+                        <div>
+                          <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Curriculum</h3>
+                          <p className="text-[10px] sm:text-sm text-slate-400 font-bold mt-1 uppercase tracking-widest">
+                            {editingCourse.subjects?.length || 0} Subjects Total
+                          </p>
+                        </div>
+                        <button 
+                          onClick={() => {
+                            const newSubject = { id: Math.random().toString(36).substr(2, 9), title: '', description: '', modules: [] };
+                            const newSubjects = [...(editingCourse.subjects || []), newSubject];
+                            setEditingCourse({ ...editingCourse, subjects: newSubjects });
+                            setEditingSubjectIndex(newSubjects.length - 1);
+                          }}
+                          className="group w-full xs:w-auto flex items-center justify-center gap-3 text-[10px] sm:text-xs font-black text-white bg-indigo-600 px-6 sm:px-8 py-4 rounded-2xl hover:bg-indigo-700 transition-all active:scale-95 shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)]"
                         >
-                          <div className="grid gap-3 sm:gap-4">
-                            {editingCourse.modules.map((m, i) => (
-                              <SortableModuleCard 
-                                key={m.id}
-                                module={m}
-                                index={i}
-                                onEdit={() => setEditingModuleIndex(i)}
-                                onDelete={(e) => {
-                                  e.stopPropagation();
-                                  const newModules = editingCourse.modules.filter((_, idx) => idx !== i);
-                                  setEditingCourse({...editingCourse, modules: newModules});
+                          <Plus size={18} className="group-hover:rotate-90 transition-transform duration-300" />
+                          Add New Subject
+                        </button>
+                      </div>
+
+                      <div className="grid gap-4">
+                        <DndContext 
+                          sensors={sensors}
+                          collisionDetection={closestCenter}
+                          onDragEnd={handleDragEnd}
+                        >
+                          <SortableContext 
+                            items={(editingCourse.subjects || []).map(s => s.id)}
+                            strategy={verticalListSortingStrategy}
+                          >
+                            {(editingCourse.subjects || []).map((subject, idx) => (
+                              <SortableSubjectCard 
+                                key={subject.id}
+                                subject={subject}
+                                index={idx}
+                                onEdit={() => setEditingSubjectIndex(idx)}
+                                onDelete={() => {
+                                  const newSubjects = editingCourse.subjects.filter((_, i) => i !== idx);
+                                  setEditingCourse({ ...editingCourse, subjects: newSubjects });
                                 }}
                               />
                             ))}
-                            {editingCourse.modules.length === 0 && (
-                              <div className="py-16 sm:py-20 text-center bg-white rounded-2xl sm:rounded-3xl border-2 border-dashed border-slate-100">
-                                <div className="h-12 w-12 sm:h-16 sm:w-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-200">
-                                  <BookOpen size={24} className="sm:w-8 sm:h-8" />
-                                </div>
-                                <p className="text-xs sm:text-slate-400 font-bold">Your curriculum is empty</p>
-                                <button 
-                                  onClick={() => {
-                                    const newModule = { id: Math.random().toString(36).substr(2, 9), title: '', description: '', videoUrl: '', pdfUrl: '', practiceSheetUrl: '', contentTitle: '', contentDescription: '' };
-                                    const newModules = [...editingCourse.modules, newModule];
-                                    setEditingCourse({ ...editingCourse, modules: newModules });
-                                    setEditingModuleIndex(newModules.length - 1);
-                                  }}
-                                  className="mt-3 text-[10px] sm:text-sm font-black text-indigo-600 hover:underline"
-                                >
-                                  Start building now
-                                </button>
-                              </div>
-                            )}
+                          </SortableContext>
+                        </DndContext>
+                        {(!editingCourse.subjects || editingCourse.subjects.length === 0) && (
+                          <div className="py-16 text-center bg-white rounded-3xl border-2 border-dashed border-slate-100">
+                            <p className="text-slate-400 font-bold">No subjects added yet</p>
                           </div>
-                        </SortableContext>
-                      </DndContext>
-                    ) : (
-                      <motion.div 
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="bg-white rounded-2xl sm:rounded-3xl border border-slate-100 p-6 sm:p-8 shadow-sm"
-                      >
-                        <div className="flex items-center justify-between mb-8 sm:mb-10">
-                          <button 
-                            onClick={() => setEditingModuleIndex(null)}
-                            className="flex items-center gap-2 text-[9px] sm:text-[10px] font-black text-slate-400 hover:text-indigo-600 transition-all uppercase tracking-[0.2em]"
-                          >
-                            <ArrowLeft size={14} className="sm:w-4 sm:h-4" />
-                            Back
-                          </button>
-                          <div className="flex items-center gap-3 sm:gap-4">
-                            <span className="text-[9px] sm:text-[10px] font-black text-indigo-600 bg-indigo-50 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg uppercase tracking-widest">
-                              Lesson {editingModuleIndex + 1}
-                            </span>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    // --- Subject Detail & Module Management ---
+                    <div className="flex flex-col h-full">
+                      <div className="flex items-center justify-between mb-8 shrink-0">
+                        <button 
+                          onClick={() => { setEditingSubjectIndex(null); setEditingModuleIndex(null); }}
+                          className="flex items-center gap-2 text-[10px] font-black text-slate-400 hover:text-indigo-600 transition-all uppercase tracking-[0.2em]"
+                        >
+                          <ArrowLeft size={14} />
+                          Back to Subjects
+                        </button>
+                        <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg uppercase tracking-widest">
+                          Editing Subject
+                        </span>
+                      </div>
+
+                      <div className="space-y-6 mb-10 shrink-0">
+                        <div className="group">
+                          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 group-focus-within:text-indigo-600 transition-colors">Subject Title</label>
+                          <div className="relative">
+                            <input 
+                              value={editingCourse.subjects[editingSubjectIndex].title}
+                              onChange={e => {
+                                const newSubjects = [...editingCourse.subjects];
+                                newSubjects[editingSubjectIndex].title = e.target.value;
+                                setEditingCourse({ ...editingCourse, subjects: newSubjects });
+                              }}
+                              className="w-full rounded-xl border border-slate-100 p-3.5 pl-11 text-sm font-bold outline-none focus:border-indigo-500/30 bg-white transition-all shadow-sm focus:shadow-md"
+                              placeholder="e.g. Fundamental Concepts"
+                            />
+                            <Type className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                          </div>
+                        </div>
+                        <div className="group">
+                          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 group-focus-within:text-indigo-600 transition-colors">Subject Description</label>
+                          <div className="relative">
+                            <textarea 
+                              rows={2}
+                              value={editingCourse.subjects[editingSubjectIndex].description}
+                              onChange={e => {
+                                const newSubjects = [...editingCourse.subjects];
+                                newSubjects[editingSubjectIndex].description = e.target.value;
+                                setEditingCourse({ ...editingCourse, subjects: newSubjects });
+                              }}
+                              className="w-full rounded-xl border border-slate-100 p-3.5 pl-11 text-sm font-bold outline-none focus:border-indigo-500/30 bg-white transition-all resize-none shadow-sm focus:shadow-md"
+                              placeholder="Brief overview of this subject..."
+                            />
+                            <FileText className="absolute left-4 top-4 text-slate-300" size={16} />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex-grow flex flex-col">
+                        <div className="flex items-center justify-between mb-6 shrink-0">
+                          <h4 className="text-lg font-black text-slate-900 tracking-tight">Subject Lessons</h4>
+                          {editingModuleIndex === null && (
                             <button 
                               onClick={() => {
-                                const newModules = editingCourse.modules.filter((_, idx) => idx !== editingModuleIndex);
-                                setEditingCourse({...editingCourse, modules: newModules});
-                                setEditingModuleIndex(null);
+                                const newModule = { id: Math.random().toString(36).substr(2, 9), title: '', description: '', videoUrl: '', pdfUrl: '', practiceSheetUrl: '', contentTitle: '', contentDescription: '' };
+                                const newSubjects = [...editingCourse.subjects];
+                                newSubjects[editingSubjectIndex].modules = [...newSubjects[editingSubjectIndex].modules, newModule];
+                                setEditingCourse({ ...editingCourse, subjects: newSubjects });
+                                setEditingModuleIndex(newSubjects[editingSubjectIndex].modules.length - 1);
                               }}
-                              className="h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center rounded-lg sm:rounded-xl text-red-400 hover:text-red-600 hover:bg-red-50 transition-all"
+                              className="group flex items-center gap-2 text-[10px] font-black text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-4 py-2 rounded-xl transition-all"
                             >
-                              <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
+                              <Plus size={14} className="group-hover:rotate-90 transition-transform" /> 
+                              <span>Add Lesson</span>
                             </button>
-                          </div>
+                          )}
                         </div>
 
-                        <div className="space-y-6 sm:space-y-8">
-                          <div className="group">
-                            <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Lesson Title</label>
-                            <input 
-                              placeholder="e.g. Introduction to React Hooks"
-                              value={editingCourse.modules[editingModuleIndex].contentTitle}
-                              onChange={e => {
-                                const newModules = [...editingCourse.modules];
-                                newModules[editingModuleIndex].contentTitle = e.target.value;
-                                setEditingCourse({...editingCourse, modules: newModules});
-                              }}
-                              className="w-full rounded-xl sm:rounded-2xl border border-slate-100 p-3.5 sm:p-4 text-xs sm:text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
-                            />
-                          </div>
-                          <div className="group">
-                            <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Lesson Description</label>
-                            <textarea 
-                              rows={3}
-                              placeholder="Briefly describe what this lesson covers..."
-                              value={editingCourse.modules[editingModuleIndex].contentDescription}
-                              onChange={e => {
-                                const newModules = [...editingCourse.modules];
-                                newModules[editingModuleIndex].contentDescription = e.target.value;
-                                setEditingCourse({...editingCourse, modules: newModules});
-                              }}
-                              className="w-full rounded-xl sm:rounded-2xl border border-slate-100 p-3.5 sm:p-4 text-xs sm:text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all resize-none"
-                            />
-                          </div>
-                          <div className="grid gap-5 sm:gap-6 sm:grid-cols-2">
-                            <div className="group">
-                              <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Video URL (Embed)</label>
-                              <div className="relative">
-                                <input 
-                                  placeholder="https://youtube.com/embed/..."
-                                  value={editingCourse.modules[editingModuleIndex].videoUrl}
-                                  onChange={e => {
-                                    const newModules = [...editingCourse.modules];
-                                    newModules[editingModuleIndex].videoUrl = e.target.value;
-                                    setEditingCourse({...editingCourse, modules: newModules});
-                                  }}
-                                  className="w-full rounded-xl sm:rounded-2xl border border-slate-100 p-3.5 sm:p-4 pl-11 sm:pl-12 text-xs sm:text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
-                                />
-                                <PlayCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 sm:w-[18px] sm:h-[18px]" size={16} />
-                              </div>
-                            </div>
-                            <div className="group">
-                              <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Lecture PDF</label>
-                              <div className="relative">
-                                <input 
-                                  placeholder="Link to notes"
-                                  value={editingCourse.modules[editingModuleIndex].pdfUrl}
-                                  onChange={e => {
-                                    const newModules = [...editingCourse.modules];
-                                    newModules[editingModuleIndex].pdfUrl = e.target.value;
-                                    setEditingCourse({...editingCourse, modules: newModules});
-                                  }}
-                                  className="w-full rounded-xl sm:rounded-2xl border border-slate-100 p-3.5 sm:p-4 pl-11 sm:pl-12 text-xs sm:text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
-                                />
-                                <FileText className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 sm:w-[18px] sm:h-[18px]" size={16} />
-                              </div>
-                            </div>
-                            <div className="sm:col-span-2 group">
-                              <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Practice Sheet</label>
-                              <div className="relative">
-                                <input 
-                                  placeholder="Link to exercises"
-                                  value={editingCourse.modules[editingModuleIndex].practiceSheetUrl}
-                                  onChange={e => {
-                                    const newModules = [...editingCourse.modules];
-                                    newModules[editingModuleIndex].practiceSheetUrl = e.target.value;
-                                    setEditingCourse({...editingCourse, modules: newModules});
-                                  }}
-                                  className="w-full rounded-xl sm:rounded-2xl border border-slate-100 p-3.5 sm:p-4 pl-11 sm:pl-12 text-xs sm:text-sm font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all"
-                                />
-                                <Layout className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 sm:w-[18px] sm:h-[18px]" size={16} />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="pt-2 sm:pt-4">
-                            <button 
-                              onClick={() => setEditingModuleIndex(null)}
-                              className="w-full rounded-xl sm:rounded-2xl bg-slate-900 px-8 sm:px-10 py-3.5 sm:py-4 font-black text-white shadow-xl hover:bg-indigo-600 transition-all active:scale-95 text-sm sm:text-base"
+                        <div className="overflow-y-auto custom-scrollbar pr-2">
+                          {editingModuleIndex === null ? (
+                            <DndContext 
+                              sensors={sensors}
+                              collisionDetection={closestCenter}
+                              onDragEnd={handleDragEnd}
                             >
-                              Save Lesson Details
-                            </button>
-                          </div>
+                              <SortableContext 
+                                items={editingCourse.subjects[editingSubjectIndex].modules.map(m => m.id)}
+                                strategy={verticalListSortingStrategy}
+                              >
+                                <div className="grid gap-3">
+                                  {editingCourse.subjects[editingSubjectIndex].modules.map((m, i) => (
+                                    <SortableModuleCard 
+                                      key={m.id}
+                                      module={m}
+                                      index={i}
+                                      onEdit={() => setEditingModuleIndex(i)}
+                                      onDelete={(e) => {
+                                        e.stopPropagation();
+                                        const newSubjects = [...editingCourse.subjects];
+                                        newSubjects[editingSubjectIndex].modules = newSubjects[editingSubjectIndex].modules.filter((_, idx) => idx !== i);
+                                        setEditingCourse({...editingCourse, subjects: newSubjects});
+                                      }}
+                                    />
+                                  ))}
+                                  {editingCourse.subjects[editingSubjectIndex].modules.length === 0 && (
+                                    <div className="py-12 text-center bg-white rounded-3xl border-2 border-dashed border-slate-100">
+                                      <p className="text-xs text-slate-400 font-bold">No lessons in this subject</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </SortableContext>
+                            </DndContext>
+                          ) : (
+                            <motion.div 
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm"
+                            >
+                              <div className="flex items-center justify-between mb-8">
+                                <button 
+                                  onClick={() => setEditingModuleIndex(null)}
+                                  className="flex items-center gap-2 text-[9px] font-black text-slate-400 hover:text-indigo-600 transition-all uppercase tracking-[0.2em]"
+                                >
+                                  <ArrowLeft size={14} /> Back
+                                </button>
+                                <span className="text-[9px] font-black text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg uppercase tracking-widest">
+                                  Lesson {editingModuleIndex + 1}
+                                </span>
+                              </div>
+
+                              <div className="space-y-6">
+                                <div className="group">
+                                  <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 group-focus-within:text-indigo-600 transition-colors">Lesson Title</label>
+                                  <div className="relative">
+                                    <input 
+                                      value={editingCourse.subjects[editingSubjectIndex].modules[editingModuleIndex].contentTitle}
+                                      onChange={e => {
+                                        const newSubjects = [...editingCourse.subjects];
+                                        newSubjects[editingSubjectIndex].modules[editingModuleIndex].contentTitle = e.target.value;
+                                        setEditingCourse({...editingCourse, subjects: newSubjects});
+                                      }}
+                                      className="w-full rounded-xl border border-slate-100 p-3.5 pl-11 text-xs font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all shadow-sm"
+                                      placeholder="Lesson name"
+                                    />
+                                    <Type className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
+                                  </div>
+                                </div>
+                                <div className="group">
+                                  <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 group-focus-within:text-indigo-600 transition-colors">Lesson Description</label>
+                                  <div className="relative">
+                                    <textarea 
+                                      rows={2}
+                                      value={editingCourse.subjects[editingSubjectIndex].modules[editingModuleIndex].contentDescription}
+                                      onChange={e => {
+                                        const newSubjects = [...editingCourse.subjects];
+                                        newSubjects[editingSubjectIndex].modules[editingModuleIndex].contentDescription = e.target.value;
+                                        setEditingCourse({...editingCourse, subjects: newSubjects});
+                                      }}
+                                      className="w-full rounded-xl border border-slate-100 p-3.5 pl-11 text-xs font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all resize-none shadow-sm"
+                                      placeholder="What's this lesson about?"
+                                    />
+                                    <FileText className="absolute left-4 top-4 text-slate-300" size={14} />
+                                  </div>
+                                </div>
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                  <div className="group">
+                                    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 group-focus-within:text-indigo-600 transition-colors">Video URL</label>
+                                    <div className="relative">
+                                      <input 
+                                        value={editingCourse.subjects[editingSubjectIndex].modules[editingModuleIndex].videoUrl}
+                                        onChange={e => {
+                                          const newSubjects = [...editingCourse.subjects];
+                                          newSubjects[editingSubjectIndex].modules[editingModuleIndex].videoUrl = e.target.value;
+                                          setEditingCourse({...editingCourse, subjects: newSubjects});
+                                        }}
+                                        className="w-full rounded-xl border border-slate-100 p-3.5 pl-11 text-xs font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all shadow-sm"
+                                        placeholder="YouTube Embed URL"
+                                      />
+                                      <PlayCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                                    </div>
+                                  </div>
+                                  <div className="group">
+                                    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 group-focus-within:text-indigo-600 transition-colors">Lecture PDF URL</label>
+                                    <div className="relative">
+                                      <input 
+                                        value={editingCourse.subjects[editingSubjectIndex].modules[editingModuleIndex].pdfUrl}
+                                        onChange={e => {
+                                          const newSubjects = [...editingCourse.subjects];
+                                          newSubjects[editingSubjectIndex].modules[editingModuleIndex].pdfUrl = e.target.value;
+                                          setEditingCourse({...editingCourse, subjects: newSubjects});
+                                        }}
+                                        className="w-full rounded-xl border border-slate-100 p-3.5 pl-11 text-xs font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all shadow-sm"
+                                        placeholder="Link to PDF resources"
+                                      />
+                                      <FileText className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                                    </div>
+                                  </div>
+                                  <div className="group sm:col-span-2">
+                                    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 group-focus-within:text-indigo-600 transition-colors">Practice Sheet URL</label>
+                                    <div className="relative">
+                                      <input 
+                                        value={editingCourse.subjects[editingSubjectIndex].modules[editingModuleIndex].practiceSheetUrl}
+                                        onChange={e => {
+                                          const newSubjects = [...editingCourse.subjects];
+                                          newSubjects[editingSubjectIndex].modules[editingModuleIndex].practiceSheetUrl = e.target.value;
+                                          setEditingCourse({...editingCourse, subjects: newSubjects});
+                                        }}
+                                        className="w-full rounded-xl border border-slate-100 p-3.5 pl-11 text-xs font-bold outline-none focus:border-indigo-500/30 bg-slate-50/30 focus:bg-white transition-all shadow-sm"
+                                        placeholder="Link to practice exercises"
+                                      />
+                                      <Layout className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="pt-4">
+                                  <button 
+                                    onClick={() => setEditingModuleIndex(null)}
+                                    className="w-full rounded-xl bg-indigo-600 px-8 py-4 font-black text-white shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] hover:bg-indigo-700 transition-all active:scale-95 text-sm uppercase tracking-widest"
+                                  >
+                                    Save Lesson Details
+                                  </button>
+                                </div>
+                              </div>
+                            </motion.div>
+                          )}
                         </div>
-                      </motion.div>
-                    )}
-                  </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1731,7 +2006,7 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
           </motion.div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

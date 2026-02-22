@@ -24,36 +24,43 @@ function Counter() {
   );
 }`,
     content: 'This course covers the essentials of building modern web applications with React. You will learn about JSX, Components, Props, and the Hook system.',
-    modules: [
+    subjects: [
       {
-        id: 'intro-to-react',
-        title: 'Introduction to React',
-        videoUrl: 'https://www.youtube.com/embed/w7ejDZ8SWv8',
-        description: 'An overview of what React is and why it is so popular in modern web development.',
-        pdfUrl: '#',
-        practiceSheetUrl: '#',
-        contentTitle: 'React Fundamentals Content',
-        contentDescription: 'Detailed exploration of React core concepts.'
-      },
-      {
-        id: 'jsx-deep-dive',
-        title: 'JSX Deep Dive',
-        videoUrl: 'https://www.youtube.com/embed/7fPXI_MnBOY',
-        description: 'Understanding the syntax extension for JavaScript and how it transforms into React elements.',
-        pdfUrl: '#',
-        practiceSheetUrl: '#',
-        contentTitle: '',
-        contentDescription: ''
-      },
-      {
-        id: 'components-props',
-        title: 'Components & Props',
-        videoUrl: 'https://www.youtube.com/embed/Y2hgEGPzPZY',
-        description: 'Learn how to build reusable UI pieces and pass data between them.',
-        pdfUrl: '#',
-        practiceSheetUrl: '#',
-        contentTitle: '',
-        contentDescription: ''
+        id: 'react-fundamentals-subject',
+        title: 'React Core Concepts',
+        description: 'Master the basic building blocks of React.',
+        modules: [
+          {
+            id: 'intro-to-react',
+            title: 'Introduction to React',
+            videoUrl: 'https://www.youtube.com/embed/w7ejDZ8SWv8',
+            description: 'An overview of what React is and why it is so popular in modern web development.',
+            pdfUrl: '#',
+            practiceSheetUrl: '#',
+            contentTitle: 'React Fundamentals Content',
+            contentDescription: 'Detailed exploration of React core concepts.'
+          },
+          {
+            id: 'jsx-deep-dive',
+            title: 'JSX Deep Dive',
+            videoUrl: 'https://www.youtube.com/embed/7fPXI_MnBOY',
+            description: 'Understanding the syntax extension for JavaScript and how it transforms into React elements.',
+            pdfUrl: '#',
+            practiceSheetUrl: '#',
+            contentTitle: '',
+            contentDescription: ''
+          },
+          {
+            id: 'components-props',
+            title: 'Components & Props',
+            videoUrl: 'https://www.youtube.com/embed/Y2hgEGPzPZY',
+            description: 'Learn how to build reusable UI pieces and pass data between them.',
+            pdfUrl: '#',
+            practiceSheetUrl: '#',
+            contentTitle: '',
+            contentDescription: ''
+          }
+        ]
       }
     ]
   },
@@ -75,26 +82,33 @@ df = pd.read_csv('data.csv')
 df.plot(kind='scatter', x='age', y='salary')
 plt.show()`,
     content: 'Dive deep into the world of data with Python. We will explore libraries like Pandas, NumPy, and Matplotlib to turn raw data into insights.',
-    modules: [
+    subjects: [
       {
-        id: 'python-basics',
-        title: 'Python Basics for Data Science',
-        videoUrl: 'https://www.youtube.com/embed/rfscVS0vtbw',
-        description: 'A quick refresher on Python syntax specifically for data analysis tasks.',
-        pdfUrl: '#',
-        practiceSheetUrl: '#',
-        contentTitle: 'Python Data Science Content',
-        contentDescription: 'Advanced data analysis techniques with Python.'
-      },
-      {
-        id: 'pandas-intro',
-        title: 'Introduction to Pandas',
-        videoUrl: 'https://www.youtube.com/embed/vmEHCJofslg',
-        description: 'Learn how to manipulate dataframes and series using the powerful Pandas library.',
-        pdfUrl: '#',
-        practiceSheetUrl: '#',
-        contentTitle: '',
-        contentDescription: ''
+        id: 'python-basics-subject',
+        title: 'Python Fundamentals',
+        description: 'Core Python skills for data science.',
+        modules: [
+          {
+            id: 'python-basics',
+            title: 'Python Basics for Data Science',
+            videoUrl: 'https://www.youtube.com/embed/rfscVS0vtbw',
+            description: 'A quick refresher on Python syntax specifically for data analysis tasks.',
+            pdfUrl: '#',
+            practiceSheetUrl: '#',
+            contentTitle: 'Python Data Science Content',
+            contentDescription: 'Advanced data analysis techniques with Python.'
+          },
+          {
+            id: 'pandas-intro',
+            title: 'Introduction to Pandas',
+            videoUrl: 'https://www.youtube.com/embed/vmEHCJofslg',
+            description: 'Learn how to manipulate dataframes and series using the powerful Pandas library.',
+            pdfUrl: '#',
+            practiceSheetUrl: '#',
+            contentTitle: '',
+            contentDescription: ''
+          }
+        ]
       }
     ]
   },
@@ -119,26 +133,33 @@ plt.show()`,
   </div>
 </div>`,
     content: 'Tailwind CSS is a utility-first CSS framework for rapidly building custom user interfaces. This course teaches you how to use it effectively.',
-    modules: [
+    subjects: [
       {
-        id: 'utility-first',
-        title: 'The Utility-First Workflow',
-        videoUrl: 'https://www.youtube.com/embed/mr15Xzb1Ook',
-        description: 'Why utility-first CSS is a game changer for developer productivity.',
-        pdfUrl: '#',
-        practiceSheetUrl: '#',
-        contentTitle: 'Tailwind CSS Mastery Content',
-        contentDescription: 'Mastering utility-first CSS design patterns.'
-      },
-      {
-        id: 'responsive-design',
-        title: 'Responsive Design with Tailwind',
-        videoUrl: 'https://www.youtube.com/embed/6zIuAyLZAt0',
-        description: 'Mastering breakpoints and mobile-first design patterns.',
-        pdfUrl: '#',
-        practiceSheetUrl: '#',
-        contentTitle: '',
-        contentDescription: ''
+        id: 'tailwind-basics-subject',
+        title: 'Tailwind Fundamentals',
+        description: 'Master the utility-first approach.',
+        modules: [
+          {
+            id: 'utility-first',
+            title: 'The Utility-First Workflow',
+            videoUrl: 'https://www.youtube.com/embed/mr15Xzb1Ook',
+            description: 'Why utility-first CSS is a game changer for developer productivity.',
+            pdfUrl: '#',
+            practiceSheetUrl: '#',
+            contentTitle: 'Tailwind CSS Mastery Content',
+            contentDescription: 'Mastering utility-first CSS design patterns.'
+          },
+          {
+            id: 'responsive-design',
+            title: 'Responsive Design with Tailwind',
+            videoUrl: 'https://www.youtube.com/embed/6zIuAyLZAt0',
+            description: 'Mastering breakpoints and mobile-first design patterns.',
+            pdfUrl: '#',
+            practiceSheetUrl: '#',
+            contentTitle: '',
+            contentDescription: ''
+          }
+        ]
       }
     ]
   }
