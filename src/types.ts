@@ -27,5 +27,6 @@ export interface Course {
   language: string;
   content: string;
   routineUrl: string;
+  channelUrl?: string;
   subjects: Subject[];
 }

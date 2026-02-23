@@ -29,6 +29,8 @@ import {
   FileText,
   ExternalLink,
   Calendar,
+  Bell,
+  Users,
   Plus,
   Edit,
   Trash2,
@@ -808,57 +810,96 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
       <div className="min-h-screen bg-slate-50 selection:bg-indigo-100 selection:text-indigo-900">
         <div className="mx-auto max-w-7xl px-4 sm:px-8 py-12 sm:py-20 lg:px-10">
           <header className="mb-12 sm:mb-20">
-            <div className="inline-flex items-center gap-2 mb-4 rounded-full bg-indigo-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 border border-indigo-100/50">
-              Course Subjects
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8">
+              <div className="max-w-2xl">
+                <div className="inline-flex items-center gap-2 mb-4 rounded-full bg-indigo-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 border border-indigo-100/50">
+                  Curriculum Overview
+                </div>
+                <h1 className="text-3xl sm:text-6xl font-black tracking-tight text-slate-900 mb-6 leading-[1.1]">{course.title}</h1>
+                <p className="text-base sm:text-xl text-slate-500 font-medium leading-relaxed">
+                  Select a subject below to view its curriculum and start learning.
+                </p>
+              </div>
+              
+              <div className="flex flex-wrap gap-3 sm:gap-4">
+                {course.channelUrl && (
+                  <a 
+                    href={course.channelUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-3 bg-indigo-600 text-white px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] hover:bg-indigo-700 hover:-translate-y-1 transition-all active:scale-95"
+                  >
+                    <Bell size={18} className="group-hover:animate-bounce" />
+                    Join Channel
+                  </a>
+                )}
+                {course.routineUrl && (
+                  <a 
+                    href={course.routineUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-3 bg-white text-slate-900 border border-slate-200 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm hover:shadow-xl hover:border-indigo-100 hover:-translate-y-1 transition-all active:scale-95"
+                  >
+                    <Calendar size={18} className="text-indigo-600" />
+                    Full Routine
+                  </a>
+                )}
+              </div>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-4">{course.title}</h1>
-            <p className="text-base sm:text-xl text-slate-500 font-medium max-w-2xl leading-relaxed">
-              Select a subject below to view its curriculum and start learning.
-            </p>
           </header>
 
-          <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {(course.subjects || []).map((subject, idx) => (
               <motion.div
                 key={subject.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
+                transition={{ delay: idx * 0.1, duration: 0.5, ease: "easeOut" }}
                 onClick={() => setSelectedSubjectId(subject.id)}
-                className="group relative flex flex-col bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(79,70,229,0.1)] transition-all duration-500 cursor-pointer overflow-hidden"
+                className="group relative flex flex-col bg-white rounded-[3rem] border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.03)] hover:shadow-[0_40px_80px_-20px_rgba(79,70,229,0.15)] hover:border-indigo-100/50 transition-all duration-700 cursor-pointer overflow-hidden"
               >
                 {subject.imageUrl ? (
-                  <div className="relative h-48 w-full overflow-hidden">
+                  <div className="relative h-56 w-full overflow-hidden">
                     <img 
                       src={subject.imageUrl} 
                       alt={subject.title}
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
                       referrerPolicy="no-referrer"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
+                    <div className="absolute top-6 right-6">
+                      <div className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-indigo-600 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <ChevronRight size={20} />
+                      </div>
+                    </div>
                   </div>
                 ) : (
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-indigo-500/10 transition-colors" />
+                  <div className="relative h-24 w-full bg-slate-50 overflow-hidden">
+                    <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/5 rounded-full blur-3xl -mr-24 -mt-24 group-hover:bg-indigo-500/10 transition-colors duration-700" />
+                  </div>
                 )}
                 
-                <div className="p-8 pt-6">
+                <div className="p-10 pt-4 flex flex-col flex-grow">
                   {!subject.imageUrl && (
-                    <div className="h-14 w-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-sm">
-                      <BookOpen size={28} />
+                    <div className="h-16 w-16 rounded-3xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-8 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-700 shadow-inner">
+                      <BookOpen size={32} />
                     </div>
                   )}
                   
-                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">{subject.title}</h3>
-                  <p className="text-sm text-slate-500 font-medium leading-relaxed mb-8 line-clamp-2">
+                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 mb-4 group-hover:text-indigo-600 transition-colors duration-300 leading-tight">{subject.title}</h3>
+                  <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed mb-10 line-clamp-3 opacity-80 group-hover:opacity-100 transition-opacity">
                     {subject.description || 'Explore the core concepts and advanced techniques in this subject.'}
                   </p>
                   
-                  <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
-                    <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">
-                      {subject.modules.length} Lessons
-                    </span>
-                    <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 group-hover:text-indigo-600 uppercase tracking-widest transition-colors">
-                      View Subject <ChevronRight size={14} />
+                  <div className="mt-auto pt-8 border-t border-slate-50 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-2 w-2 rounded-full bg-indigo-600 animate-pulse" />
+                      <span className="text-xs font-black text-indigo-600 uppercase tracking-widest">
+                        {subject.modules.length} Modules
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs font-black text-slate-400 group-hover:text-indigo-600 uppercase tracking-widest transition-all duration-300 group-hover:gap-4">
+                      Start <ChevronRight size={16} />
                     </div>
                   </div>
                 </div>
@@ -1720,6 +1761,19 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                             placeholder="Link to schedule"
                           />
                           <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 sm:w-[18px] sm:h-[18px]" size={16} />
+                        </div>
+                      </div>
+                      <div className="group">
+                        <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Channel URL (Telegram/WhatsApp)</label>
+                        <div className="relative">
+                          <input 
+                            type="text" 
+                            value={editingCourse.channelUrl || ''}
+                            onChange={e => setEditingCourse({...editingCourse, channelUrl: e.target.value})}
+                            className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 pl-11 sm:pl-12 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-sm sm:text-base text-slate-900"
+                            placeholder="Link to dedicated channel"
+                          />
+                          <Bell className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 sm:w-[18px] sm:h-[18px]" size={16} />
                         </div>
                       </div>
                     </div>
