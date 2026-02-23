@@ -17,6 +17,7 @@ import {
   LogIn, 
   ChevronRight, 
   ArrowLeft, 
+  Archive,
   Search,
   Type,
   Layout,
@@ -842,6 +843,17 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
                   >
                     <Calendar size={18} className="text-indigo-600" />
                     Full Routine
+                  </a>
+                )}
+                {course.archiveUrl && (
+                  <a 
+                    href={course.archiveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-3 bg-white text-slate-900 border border-slate-200 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm hover:shadow-xl hover:border-indigo-100 hover:-translate-y-1 transition-all active:scale-95"
+                  >
+                    <Archive size={18} className="text-indigo-600" />
+                    Archive Class
                   </a>
                 )}
               </div>
@@ -1774,6 +1786,19 @@ const AdminPanel = ({ courses, onUpdate }: { courses: Course[]; onUpdate: () => 
                             placeholder="Link to dedicated channel"
                           />
                           <Bell className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 sm:w-[18px] sm:h-[18px]" size={16} />
+                        </div>
+                      </div>
+                      <div className="group">
+                        <label className="block text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 sm:mb-3 group-focus-within:text-indigo-600 transition-colors">Archive URL</label>
+                        <div className="relative">
+                          <input 
+                            type="text" 
+                            value={editingCourse.archiveUrl || ''}
+                            onChange={e => setEditingCourse({...editingCourse, archiveUrl: e.target.value})}
+                            className="w-full rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 pl-11 sm:pl-12 outline-none focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-sm sm:text-base text-slate-900"
+                            placeholder="Link to archived classes"
+                          />
+                          <Archive className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 sm:w-[18px] sm:h-[18px]" size={16} />
                         </div>
                       </div>
                     </div>
