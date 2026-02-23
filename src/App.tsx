@@ -848,7 +848,7 @@ const CourseDetailPage = ({ courses }: { courses: Course[] }) => {
                 {course.archiveUrl && (
                   <a 
                     href={course.archiveUrl}
-                    target="_blank"
+                    target="_self"
                     rel="noopener noreferrer"
                     className="group flex items-center gap-3 bg-white text-slate-900 border border-slate-200 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm hover:shadow-xl hover:border-indigo-100 hover:-translate-y-1 transition-all active:scale-95"
                   >
