@@ -44,6 +44,8 @@ import {
   Maximize,
   RotateCcw,
   RotateCw,
+  MessageSquare,
+  Send,
   Check,
   ShieldAlert
 } from 'lucide-react';
@@ -2120,6 +2122,36 @@ const AppContent = ({ courses, isAdmin, handleLogout, handleLogin, fetchCourses,
               <Code size={18} />
             </div>
             <span className="text-lg font-bold text-slate-900">EduStudious</span>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mb-8">
+            <a 
+              href="https://t.me/AIO_Support" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="group flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-300"
+            >
+              <div className="h-8 w-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                <Send size={16} />
+              </div>
+              <div className="text-left">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Support Portal</p>
+                <p className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">@AIO_Support</p>
+              </div>
+            </a>
+            <a 
+              href="https://t.me/primecoursesbd_bot" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="group flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-300"
+            >
+              <div className="h-8 w-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                <MessageSquare size={16} />
+              </div>
+              <div className="text-left">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Main Bot</p>
+                <p className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">@primecoursesbd_bot</p>
+              </div>
+            </a>
           </div>
           <p className="text-sm text-slate-500">
             © {new Date().getFullYear()} EduStudious Learning Platform. All rights reserved.
